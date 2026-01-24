@@ -16,8 +16,8 @@ input{width:90%;padding:10px;margin:8px}
 button{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:6px;cursor:pointer}
 footer{background:#020617;padding:20px;text-align:center}
 </style>
-
 </head>
+
 <body>
 
 <header>
@@ -35,21 +35,20 @@ footer{background:#020617;padding:20px;text-align:center}
 <section id="home">
 <h2>Welcome to Disha Computer Education</h2>
 <p>
-We are a professional computer education institute providing
-industry-oriented courses like Tally, O-Level, CCC, Programming,
-and Certification programs.
+We provide professional computer education with practical training,
+certification programs, and career-oriented courses.
 </p>
 
 <div class="card">
 <h3>Why Choose Us?</h3>
 <p>✔ Experienced Faculty</p>
 <p>✔ 100% Practical Training</p>
-<p>✔ Govt & Private Certification</p>
 <p>✔ Job-Oriented Courses</p>
+<p>✔ Trusted Certificates</p>
 </div>
 
 <div class="card">
-<h3>Our Courses</h3>
+<h3>Courses Offered</h3>
 <p>Tally Prime with GST</p>
 <p>O Level (NIELIT)</p>
 <p>CCC</p>
@@ -59,7 +58,7 @@ and Certification programs.
 
 <!-- LOGIN -->
 <section id="login" class="hidden">
-<h2>Secure Login</h2>
+<h2>Login</h2>
 <div class="card">
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
@@ -76,11 +75,6 @@ and Certification programs.
 
 <div class="card" id="adminArea">
 <h3>Admin Panel</h3>
-<input id="courseName" placeholder="Course Name">
-<button onclick="addCourse()">Add Course</button>
-
-<hr>
-
 <input id="studentName" placeholder="Student Name">
 <input id="studentCourse" placeholder="Course">
 <button onclick="generateCert()">Generate Certificate</button>
@@ -106,24 +100,14 @@ and Certification programs.
 © 2026 Disha Computer Education
 </footer>
 
-<!-- 🔥 FIREBASE v8 (STABLE) -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
 <script>
-// 🔴 REPLACE WITH YOUR FIREBASE CONFIG
-var firebaseConfig = {
- apiKey: "YOUR_API_KEY",
- authDomain: "YOUR_PROJECT.firebaseapp.com",
- projectId: "YOUR_PROJECT_ID"
-};
-firebase.initializeApp(firebaseConfig);
+// USERS (NO FIREBASE)
+const USERS = [
+ {email:"admin@disha.com", password:"admin123", role:"admin"},
+ {email:"student@disha.com", password:"student123", role:"student"}
+];
 
-var auth = firebase.auth();
-var db = firebase.firestore();
-
-// PAGE NAV
+// PAGE SWITCH
 function showPage(id){
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
@@ -131,64 +115,58 @@ document.getElementById(id).classList.remove("hidden");
 
 // LOGIN
 function login(){
-auth.signInWithEmailAndPassword(email.value,password.value)
-.then(res=>{
-loadUser(res.user.uid);
-})
-.catch(e=>loginMsg.innerText=e.message);
+let u = USERS.find(
+ x => x.email === email.value && x.password === password.value
+);
+
+if(!u){
+loginMsg.innerText="❌ Invalid Login";
+return;
 }
 
-// LOAD ROLE
-function loadUser(uid){
-db.collection("users").doc(uid).get().then(doc=>{
-let role=doc.data().role;
-sessionStorage.setItem("role",role);
-openDashboard();
-});
+localStorage.setItem("role",u.role);
+showDashboard();
 }
 
 // DASHBOARD
 function openDashboard(){
-let role=sessionStorage.getItem("role");
-if(!role){showPage('login');return;}
+localStorage.getItem("role") ? showDashboard() : showPage('login');
+}
 
+function showDashboard(){
+let role = localStorage.getItem("role");
 showPage('dashboard');
 roleText.innerHTML="Role: <b>"+role+"</b>";
 
-adminArea.style.display=role!=="student"?"block":"none";
-studentArea.style.display=role==="student"?"block":"none";
+adminArea.style.display = role==="admin"?"block":"none";
+studentArea.style.display = role==="student"?"block":"none";
+
+if(role==="student"){
+studentCert.innerHTML = localStorage.getItem("myCert") || "No certificate issued";
+}
 }
 
 // LOGOUT
 function logout(){
-auth.signOut();
-sessionStorage.clear();
+localStorage.clear();
 showPage('home');
-}
-
-// COURSE
-function addCourse(){
-db.collection("courses").add({name:courseName.value});
-alert("Course Added");
 }
 
 // CERTIFICATE
 function generateCert(){
-let id="CERT"+Date.now();
-db.collection("certificates").doc(id).set({
-name:studentName.value,
-course:studentCourse.value
-});
-alert("Certificate ID: "+id);
+let id = "CERT"+Date.now();
+let data = studentName.value+" | "+studentCourse.value+" | "+id;
+
+localStorage.setItem(id,data);
+alert("Certificate Generated\nID: "+id);
 }
 
 // VERIFY
 function verifyCert(){
-db.collection("certificates").doc(verifyId.value).get().then(d=>{
-verifyMsg.innerHTML=d.exists
-?"✅ Valid Certificate<br>"+d.data().name+" | "+d.data().course
-:"❌ Invalid Certificate";
-});
+let d = localStorage.getItem(verifyId.value);
+verifyMsg.innerHTML = d
+? "✅ Valid Certificate<br>"+d
+: "❌ Invalid Certificate ID";
 }
 </script>
 
