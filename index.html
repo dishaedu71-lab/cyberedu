@@ -2,20 +2,20 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Disha Computer Education | Ultimate LMS</title>
+<title>Disha Computer Education | LMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{margin:0;font-family:Poppins,Arial;background:#0f172a;color:white}
-header{background:#020617;padding:20px;text-align:center;position:sticky;top:0}
+header{background:#020617;padding:15px;text-align:center;position:sticky;top:0}
 nav a{color:#facc15;margin:10px;font-weight:bold;cursor:pointer;text-decoration:none}
-nav a:hover{color:#fff}
+nav a:hover{color:white}
 section{padding:30px;text-align:center}
 .hidden{display:none}
 .card{background:white;color:black;padding:20px;margin:20px auto;max-width:520px;border-radius:10px}
 input,select{width:90%;padding:10px;margin:6px}
 button{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:6px;cursor:pointer}
 button:hover{background:#1e40af}
-.timer{font-weight:bold;color:red}
+.timer{color:red;font-weight:bold}
 .progress{height:8px;background:#ddd;border-radius:5px;overflow:hidden}
 .bar{height:8px;background:#22c55e;width:100%}
 footer{background:#020617;padding:15px}
@@ -26,50 +26,49 @@ footer{background:#020617;padding:15px}
 
 <header>
 <h1>Disha Computer Education</h1>
-<p>Professional Course-wise Online Examination System</p>
+<p>Professional Online Examination System</p>
 <nav>
 <a onclick="show('home')">Home</a>
-<a onclick="show('login')">Login</a>
-<a onclick="show('register')">Register</a>
-<a onclick="openDashboard()">Dashboard</a>
+<a onclick="show('register')">Student Register</a>
+<a onclick="show('login')">Student Login</a>
+<a onclick="show('adminLogin')">Admin Login</a>
 <a onclick="startExam()">Exam</a>
 </nav>
 </header>
 
-<!-- HOME CONTENT -->
+<!-- HOME -->
 <section id="home">
 <h2>Welcome to Disha Computer Education LMS</h2>
-<p>Online Exam • Course-wise Test • Result • Certificate • Leaderboard</p>
+<p>Online Exam • Course-wise Test • Result • Certificate</p>
 
 <div class="card">
-<h3>Available Courses</h3>
-✔ O Level • CCC • ADCA • Tally Prime with GST • Web Designing
+<h3>Courses</h3>
+O Level • CCC • ADCA • Tally • Web Designing
 </div>
 
 <div class="card">
 <h3>System Features</h3>
-✔ Course-wise Online Exam  
+✔ Course-wise Exam  
 ✔ Instant Result  
-✔ Certificate Generation  
-✔ Admin Question Manager  
-✔ Leaderboard Ranking  
+✔ Certificate  
+✔ Admin Question Control  
+✔ Leaderboard  
 </div>
 
 <div class="card">
 <h3>Student Instructions</h3>
 1. Register with Name & Course  
-2. Login and Start Exam  
+2. Login to Start Exam  
 3. 15 Seconds per Question  
-4. Pass Marks 60%  
-5. Download Certificate  
+4. 60% Marks to Pass  
 </div>
 </section>
 
-<!-- REGISTER -->
+<!-- STUDENT REGISTER -->
 <section id="register" class="hidden">
 <div class="card">
 <h3>Student Registration</h3>
-<input id="rName" placeholder="Student Full Name">
+<input id="rName" placeholder="Full Name">
 <input id="rEmail" placeholder="Email">
 <select id="rCourse">
 <option value="">Select Course</option>
@@ -77,7 +76,7 @@ footer{background:#020617;padding:15px}
 <option>CCC</option>
 <option>ADCA</option>
 <option>Tally</option>
-<option>Web Design</option>
+<option>Web Designing</option>
 </select>
 <input id="rPass" type="password" placeholder="Password">
 <button onclick="register()">Register</button>
@@ -85,14 +84,25 @@ footer{background:#020617;padding:15px}
 </div>
 </section>
 
-<!-- LOGIN -->
+<!-- STUDENT LOGIN -->
 <section id="login" class="hidden">
 <div class="card">
-<h3>Login</h3>
+<h3>Student Login</h3>
 <input id="email" placeholder="Email">
 <input id="pass" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
 <p id="lMsg"></p>
+</div>
+</section>
+
+<!-- ADMIN LOGIN -->
+<section id="adminLogin" class="hidden">
+<div class="card">
+<h3>Admin Login</h3>
+<input id="aEmail" placeholder="Admin Email">
+<input id="aPass" type="password" placeholder="Password">
+<button onclick="adminLogin()">Login</button>
+<p id="aMsg"></p>
 </div>
 </section>
 
@@ -102,10 +112,10 @@ footer{background:#020617;padding:15px}
 <p id="role"></p>
 <button onclick="logout()">Logout</button>
 
-<!-- ADMIN -->
+<!-- ADMIN PANEL -->
 <div class="card" id="adminBox">
-<h3>Admin Panel</h3>
-<p>Total Users: <b id="uCount"></b></p>
+<h3>Admin Control Panel</h3>
+<p>Total Students: <b id="uCount"></b></p>
 
 <h4>Add Course-wise Question</h4>
 <select id="qCourse">
@@ -113,7 +123,7 @@ footer{background:#020617;padding:15px}
 <option>CCC</option>
 <option>ADCA</option>
 <option>Tally</option>
-<option>Web Design</option>
+<option>Web Designing</option>
 </select>
 <input id="qText" placeholder="Question">
 <input id="o1" placeholder="Option 1">
@@ -130,11 +140,11 @@ footer{background:#020617;padding:15px}
 <p id="qMsg"></p>
 </div>
 
-<!-- STUDENT -->
+<!-- STUDENT PANEL -->
 <div class="card" id="studentBox">
 <h3>Your Result</h3>
 <div id="resultArea"></div>
-<button onclick="printPDF()">Download PDF</button>
+<button onclick="printPDF()">Download Result PDF</button>
 <button onclick="printCert()">Print Certificate</button>
 </div>
 
@@ -158,16 +168,16 @@ footer{background:#020617;padding:15px}
 
 <script>
 // USERS
-let users=JSON.parse(localStorage.getItem("users"))||[
+let users = JSON.parse(localStorage.getItem("users")) || [
 {name:"Admin",email:"admin@disha.com",pass:"admin123",role:"admin"}
 ];
 
-let bank=JSON.parse(localStorage.getItem("bank"))||[
+let bank = JSON.parse(localStorage.getItem("bank")) || [
 ["O Level","HTML stands for?","Hyper Text Markup","High Text","Hyper Tool","None",0],
 ["CCC","CPU full form?","Central Processing Unit","Control Unit","Computer Unit","None",0]
 ];
 
-let leaderboard=JSON.parse(localStorage.getItem("leaderboard"))||[];
+let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
 
 // NAV
 function show(id){
@@ -175,7 +185,7 @@ document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 
-// REGISTER
+// STUDENT REGISTER
 function register(){
 if(!rName.value || !rEmail.value || !rCourse.value || !rPass.value){
 rMsg.innerText="All fields required"; return;
@@ -185,30 +195,43 @@ localStorage.setItem("users",JSON.stringify(users));
 rMsg.innerText="Registered Successfully";
 }
 
-// LOGIN
+// STUDENT LOGIN
 function login(){
-let u=users.find(x=>x.email===email.value && x.pass===pass.value);
-if(!u){lMsg.innerText="Invalid Login";return;}
+let u = users.find(x=>x.email===email.value && x.pass===pass.value && x.role==="student");
+if(!u){lMsg.innerText="Invalid Student Login";return;}
 localStorage.setItem("user",JSON.stringify(u));
-localStorage.setItem("role",u.role);
+localStorage.setItem("role","student");
 openDashboard();
+}
+
+// ADMIN LOGIN
+function adminLogin(){
+if(aEmail.value==="admin@disha.com" && aPass.value==="admin123"){
+localStorage.setItem("role","admin");
+openDashboard();
+}else{
+aMsg.innerText="Invalid Admin Login";
+}
 }
 
 // DASHBOARD
 function openDashboard(){
 let r=localStorage.getItem("role");
-if(!r){show("login");return;}
+if(!r){show("home");return;}
 show("dashboard");
 role.innerText="Role: "+r;
-adminBox.style.display=r==="admin"?"block":"none";
-studentBox.style.display=r==="student"?"block":"none";
-uCount.innerText=users.length;
-resultArea.innerHTML=localStorage.getItem("result")||"No Exam Given";
+adminBox.style.display = (r==="admin") ? "block" : "none";
+studentBox.style.display = (r==="student") ? "block" : "none";
+uCount.innerText = users.filter(u=>u.role==="student").length;
+resultArea.innerHTML = localStorage.getItem("result") || "No Exam Given";
 showLeader();
 }
 
 // LOGOUT
-function logout(){localStorage.clear();show("home");}
+function logout(){
+localStorage.clear();
+show("home");
+}
 
 // ADMIN ADD QUESTION
 function addQuestion(){
@@ -222,8 +245,8 @@ let qs=[],i=0,score=0,time=15,timer;
 function startExam(){
 let user=JSON.parse(localStorage.getItem("user"));
 if(!user){show("login");return;}
-qs=bank.filter(b=>b[0]===user.course).sort(()=>0.5-Math.random()).slice(0,10);
-if(qs.length==0){alert("No questions for this course");return;}
+qs = bank.filter(b=>b[0]===user.course).sort(()=>0.5-Math.random()).slice(0,10);
+if(qs.length===0){alert("No Questions for this course");return;}
 i=0;score=0;
 show("exam");nextQ();
 }
@@ -285,14 +308,14 @@ w.print();
 // CERTIFICATE
 function printCert(){
 let c=localStorage.getItem("cert");
-if(!c){alert("No Certificate");return;}
+if(!c){alert("No Certificate Available");return;}
 let user=JSON.parse(localStorage.getItem("user"));
 let w=window.open("");
 w.document.write(`
 <div class='cert'>
 <h1>Disha Computer Education</h1>
 <h2>Certificate of Achievement</h2>
-<p>This is to certify that</p>
+<p>This certifies that</p>
 <h2>${user.name}</h2>
 <p>has successfully passed ${user.course} Examination</p>
 <p>Certificate ID: ${c}</p>
