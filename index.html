@@ -2,222 +2,170 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Disha Computer Education</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Disha Computer Education | Company System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb);
-color:white;
-}
-header{
-padding:20px;
-text-align:center;
-background:#020617;
-}
-nav a{
-color:yellow;
-margin:10px;
-text-decoration:none;
-font-weight:bold;
-}
-section{padding:30px;text-align:center;}
-.card{
-background:white;
-color:black;
-margin:20px auto;
-padding:20px;
-border-radius:10px;
-width:320px;
-box-shadow:0 5px 15px rgba(0,0,0,.3);
-}
-button{
-padding:8px 15px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:5px;
-cursor:pointer;
-}
-button:hover{background:#1e40af;}
-input,textarea{
-padding:8px;
-margin:5px;
-width:90%;
-}
-.hidden{display:none;}
-footer{
-background:#020617;
-text-align:center;
-padding:15px;
-}
+body{margin:0;font-family:Arial;background:#020617;color:white}
+header{background:#020617;padding:15px;text-align:center}
+nav a{color:#facc15;margin:10px;text-decoration:none;font-weight:bold}
+section{padding:25px;text-align:center}
+.card{background:white;color:black;padding:20px;margin:15px auto;width:360px;border-radius:10px}
+input,select{width:90%;padding:10px;margin:6px}
+button{padding:10px 18px;background:#2563eb;color:white;border:none;border-radius:6px}
+.hidden{display:none}
+footer{background:#020617;padding:15px;text-align:center}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Disha Computer Education</h1>
-<p>Professional Online Education Platform</p>
+<h2>Disha Computer Education</h2>
 <nav>
-<a href="#" onclick="showPage('home')">Home</a>
-<a href="#" onclick="showPage('student')">Student Login</a>
-<a href="#" onclick="showPage('admin')">Admin Panel</a>
-<a href="#" onclick="showPage('verify')">Verify Certificate</a>
+<a onclick="show('home')">Home</a>
+<a onclick="show('login')">Login</a>
+<a onclick="openDashboard()">Dashboard</a>
+<a onclick="show('verify')">Verify Certificate</a>
 </nav>
 </header>
 
-<!-- HOME -->
 <section id="home">
-<h2>Available Courses</h2>
-
-<div class="card">
-<h3>Tally Prime with GST</h3>
-<p>Syllabus: Accounting, GST, Inventory</p>
-<button onclick="downloadSyllabus('Tally')">📥 Download Syllabus</button>
-<button onclick="enroll('Tally Prime')">Enroll Now</button>
-</div>
-
-<div class="card">
-<h3>O Level (NIELIT)</h3>
-<p>Syllabus: IT Tools, Web Design, Python</p>
-<button onclick="downloadSyllabus('O Level')">📥 Download Syllabus</button>
-<button onclick="enroll('O Level')">Enroll Now</button>
-</div>
-
-<div class="card">
-<h3>CCC Course</h3>
-<p>Syllabus: MS Office, Internet</p>
-<button onclick="downloadSyllabus('CCC')">📥 Download Syllabus</button>
-<button onclick="enroll('CCC')">Enroll Now</button>
-</div>
-
+<h3>Company-Level Education Management System</h3>
 </section>
 
-<!-- STUDENT LOGIN -->
-<section id="student" class="hidden">
-<h2>Student Enrollment</h2>
-<p id="courseName"></p>
-<input id="sname" placeholder="Enter Student Name">
-<input id="semail" placeholder="Enter Email">
-<button onclick="createLogin()">Submit & Get Login</button>
+<!-- LOGIN -->
+<section id="login" class="hidden">
+<h3>Secure Login</h3>
+<div class="card">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
 <p id="loginMsg"></p>
-</section>
-
-<!-- ADMIN PANEL -->
-<section id="admin" class="hidden">
-<h2>🔐 Admin Panel</h2>
-
-<div class="card">
-<h3>Add New Course (Demo)</h3>
-<input id="cname" placeholder="Course Name">
-<textarea id="csyll" placeholder="Course Syllabus"></textarea>
-<button onclick="addCourse()">Add Course</button>
-<p id="adminMsg"></p>
-</div>
-
-<div class="card">
-<h3>Add Exam Question (Demo)</h3>
-<input placeholder="Question">
-<input placeholder="Option A">
-<input placeholder="Option B">
-<input placeholder="Option C">
-<input placeholder="Option D">
-<button>Save Question</button>
 </div>
 </section>
 
-<!-- CERTIFICATE GENERATOR -->
-<section id="certificate" class="hidden">
-<h2>🎓 Certificate</h2>
-<div class="card">
-<p>This is to certify that</p>
-<h3 id="certStudent"></h3>
-<p>has successfully completed</p>
-<b id="certCourse"></b>
-<p>Certificate ID:</p>
-<h3 id="certID"></h3>
-<button onclick="window.print()">Print Certificate</button>
+<!-- DASHBOARD -->
+<section id="dashboard" class="hidden">
+<h3>📊 Dashboard</h3>
+<p id="userRole"></p>
+<button onclick="logout()">Logout</button>
+
+<div class="card" id="courseBox">
+<h4>Add Course</h4>
+<input id="courseName" placeholder="Course Name">
+<button onclick="addCourse()">Add</button>
+</div>
+
+<div class="card" id="certBox">
+<h4>Generate Certificate</h4>
+<input id="studentName" placeholder="Student Name">
+<input id="studentCourse" placeholder="Course">
+<button onclick="generateCert()">Generate</button>
+</div>
+
+<div class="card" id="studentBox">
+<h4>Your Certificate</h4>
+<p id="studentCert"></p>
 </div>
 </section>
 
-<!-- CERTIFICATE VERIFY -->
+<!-- VERIFY -->
 <section id="verify" class="hidden">
-<h2>Certificate Verification</h2>
-<input id="verifyID" placeholder="Enter Certificate ID">
+<h3>Certificate Verification</h3>
+<div class="card">
+<input id="verifyId" placeholder="Certificate ID">
 <button onclick="verifyCert()">Verify</button>
 <p id="verifyMsg"></p>
+</div>
 </section>
 
-<footer>
-© 2026 Disha Computer Education
-</footer>
+<footer>© 2026 Disha Computer Education</footer>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
 
 <script>
-let selectedCourse="";
+// 🔥 FIREBASE CONFIG (REPLACE)
+const firebaseConfig={
+ apiKey:"YOUR_API_KEY",
+ authDomain:"YOUR_PROJECT.firebaseapp.com",
+ projectId:"YOUR_PROJECT_ID"
+};
+firebase.initializeApp(firebaseConfig);
 
-function showPage(page){
- document.querySelectorAll("section").forEach(sec=>sec.classList.add("hidden"));
- document.getElementById(page).classList.remove("hidden");
+const auth=firebase.auth();
+const db=firebase.firestore();
+
+// NAV
+function show(id){
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
 }
 
-function downloadSyllabus(course){
- alert("Demo: "+course+" syllabus download started.");
+// LOGIN
+function login(){
+auth.signInWithEmailAndPassword(email.value,password.value)
+.then(res=>loadUser(res.user.uid))
+.catch(e=>loginMsg.innerText=e.message);
 }
 
-function enroll(course){
- selectedCourse=course;
- localStorage.setItem("course",course);
- document.getElementById("courseName").innerText="Course: "+course;
- showPage('student');
+// LOAD ROLE
+function loadUser(uid){
+db.collection("users").doc(uid).get().then(d=>{
+let role=d.data().role;
+sessionStorage.setItem("role",role);
+openDashboard();
+});
 }
 
-function createLogin(){
- let name=document.getElementById("sname").value;
- let email=document.getElementById("semail").value;
- if(name==""||email==""){alert("Fill details");return;}
+// DASHBOARD
+function openDashboard(){
+let role=sessionStorage.getItem("role");
+if(!role){show('login');return;}
+show('dashboard');
+userRole.innerHTML="Role: <b>"+role+"</b>";
 
- let loginID="DCE"+Math.floor(Math.random()*10000);
- let pass=Math.random().toString(36).slice(-6);
-
- document.getElementById("loginMsg").innerHTML=
- "Login ID: <b>"+loginID+"</b><br>Password: <b>"+pass+"</b><br>Saved!";
-
- // Generate Certificate Data
- let certID="CERT"+Math.floor(Math.random()*100000);
- localStorage.setItem("certID",certID);
- localStorage.setItem("certName",name);
- localStorage.setItem("certCourse",selectedCourse);
-
- // Show Certificate
- document.getElementById("certStudent").innerText=name;
- document.getElementById("certCourse").innerText=selectedCourse;
- document.getElementById("certID").innerText=certID;
- showPage('certificate');
+courseBox.style.display=role!=="student"?"block":"none";
+certBox.style.display=role!=="student"?"block":"none";
+studentBox.style.display=role==="student"?"block":"none";
 }
 
+// COURSE
 function addCourse(){
- let cname=document.getElementById("cname").value;
- let csyll=document.getElementById("csyll").value;
- if(cname==""||csyll==""){alert("Fill details");return;}
- document.getElementById("adminMsg").innerHTML=
- "Course <b>"+cname+"</b> added successfully! (Demo)";
+db.collection("courses").add({name:courseName.value});
+alert("Course Added");
 }
 
+// CERTIFICATE
+function generateCert(){
+let id="CERT"+Date.now();
+db.collection("certificates").doc(id).set({
+name:studentName.value,
+course:studentCourse.value,
+issueDate:new Date().toDateString()
+});
+alert("Certificate ID: "+id);
+}
+
+// VERIFY
 function verifyCert(){
- let vid=document.getElementById("verifyID").value;
- let savedID=localStorage.getItem("certID");
- if(vid==savedID){
-   document.getElementById("verifyMsg").innerHTML=
-   "✅ Valid Certificate<br>Name: "+localStorage.getItem("certName")+
-   "<br>Course: "+localStorage.getItem("certCourse");
- }else{
-   document.getElementById("verifyMsg").innerHTML="❌ Invalid Certificate ID";
- }
+db.collection("certificates").doc(verifyId.value).get().then(d=>{
+verifyMsg.innerHTML=d.exists
+?"✅ Valid<br>"+d.data().name+" | "+d.data().course
+:"❌ Invalid Certificate";
+});
+}
+
+// LOGOUT
+function logout(){
+auth.signOut();
+sessionStorage.clear();
+show('home');
 }
 </script>
 
 </body>
 </html>
+
