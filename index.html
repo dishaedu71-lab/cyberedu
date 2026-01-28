@@ -1,51 +1,154 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Disha Computer Education | GOD MODE LMS</title>
+<title>Disha Computer Education | Professional LMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- GOOGLE FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
+*{box-sizing:border-box}
 body{
-margin:0;font-family:Poppins,Arial;color:white;
-background:linear-gradient(-45deg,#020617,#1e3a8a,#2563eb,#020617);
-background-size:400% 400%;
-animation:bg 12s ease infinite;
+margin:0;
+font-family:Poppins,Arial;
+background:#020617;
+color:white;
+scroll-behavior:smooth;
 }
-@keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-header{padding:20px;text-align:center;border-bottom:3px solid gold}
-nav a{color:gold;margin:10px;font-weight:bold;cursor:pointer;text-decoration:none}
+/* HEADER */
+header{
+position:sticky;
+top:0;
+z-index:1000;
+background:#020617;
+border-bottom:2px solid gold;
+}
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+}
+nav h2{color:gold;margin:0}
+nav a{
+color:white;
+margin:0 10px;
+text-decoration:none;
+font-weight:500;
+}
+nav a:hover{color:gold}
 
-section{padding:40px;text-align:center}
-.hidden{display:none}
-
+/* HERO */
 .hero{
 padding:80px 20px;
+text-align:center;
+background:linear-gradient(120deg,#020617,#020617,#1e3a8a);
 }
-.hero h1{font-size:42px}
-.hero p{font-size:18px;opacity:.9}
+.hero h1{font-size:42px;color:gold}
+.hero p{font-size:18px;max-width:900px;margin:auto}
+.hero button{
+margin-top:25px;
+padding:14px 30px;
+font-size:16px;
+border:none;
+border-radius:30px;
+background:gold;
+color:black;
+cursor:pointer;
+}
+.hero button:hover{background:#facc15}
 
-.cards{
-display:flex;flex-wrap:wrap;justify-content:center;gap:20px
+/* SECTION */
+section{padding:70px 40px}
+section h2{text-align:center;color:gold;font-size:32px}
+
+/* COURSES */
+.courses{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+margin-top:40px;
 }
+.course{
+background:#0f172a;
+padding:25px;
+border-radius:18px;
+box-shadow:0 0 20px rgba(255,215,0,0.15);
+transition:0.3s;
+}
+.course:hover{transform:translateY(-8px)}
+.course h3{color:gold}
+.course p{font-size:14px}
+
+/* WHY US */
+.why{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
+margin-top:40px;
+}
+.why div{
+background:#020617;
+border:1px solid #334155;
+padding:25px;
+border-radius:15px;
+text-align:center;
+}
+
+/* LMS */
+.hidden{display:none}
 .card{
-background:white;color:black;padding:25px;width:300px;
-border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.3)
+background:white;
+color:black;
+padding:25px;
+max-width:450px;
+margin:20px auto;
+border-radius:15px;
 }
-
+input,select{
+width:100%;
+padding:10px;
+margin:8px 0;
+}
 button{
-padding:10px 22px;background:#2563eb;color:white;
-border:none;border-radius:8px;cursor:pointer
+padding:10px 22px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
 }
 button:hover{background:#1e40af}
 
-input,select{width:90%;padding:10px;margin:6px}
+/* DASHBOARD */
+.dashboard{
+max-width:900px;
+margin:auto;
+}
+.stat{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+margin-bottom:30px;
+}
+.stat div{
+background:#0f172a;
+padding:20px;
+border-radius:15px;
+text-align:center;
+border:1px solid gold;
+}
 
-.timer{color:red;font-size:18px;font-weight:bold}
-
+/* FOOTER */
 footer{
-padding:20px;border-top:3px solid gold;text-align:center;margin-top:40px
+background:#020617;
+border-top:2px solid gold;
+padding:20px;
+text-align:center;
+font-size:14px;
 }
 </style>
 </head>
@@ -53,63 +156,47 @@ padding:20px;border-top:3px solid gold;text-align:center;margin-top:40px
 <body>
 
 <header>
-<h1>👑 Disha Computer Education</h1>
 <nav>
-<a onclick="show('home')">Home</a>
-<a onclick="show('courses')">Courses</a>
-<a onclick="show('register')">Register</a>
+<h2>Disha Computer</h2>
+<div>
+<a href="#home">Home</a>
+<a href="#courses">Courses</a>
+<a href="#about">About</a>
 <a onclick="show('login')">Login</a>
+<a onclick="show('register')">Register</a>
 <a onclick="dashboard()">Dashboard</a>
-<a onclick="startExam()">Start Exam</a>
-<a onclick="show('verify')">Verify</a>
+</div>
 </nav>
 </header>
 
-<!-- HOME -->
-<section id="home">
-<div class="hero">
+<!-- HOME PAGE -->
+<div id="home" class="hero">
 <h1>India’s Trusted Computer Education Institute</h1>
-<p>Online Exams • Certificates • Franchise System • Ranking • GOD MODE LMS</p>
-<button onclick="show('register')">Join Now</button>
-<button onclick="show('courses')">View Courses</button>
+<p>
+Professional Computer Courses • Online Exams • Certificates • Franchise Ready LMS  
+<br>Empowering students with skills for government & private jobs.
+</p>
+<button onclick="show('login')">Student Login</button>
 </div>
 
-<div class="cards">
-<div class="card">
-<h3>🎓 Certified Courses</h3>
-<p>Government + Job Oriented Professional Courses</p>
-</div>
-<div class="card">
-<h3>📝 Online Exam</h3>
-<p>Timer Based MCQ Exams with Ranking</p>
-</div>
-<div class="card">
-<h3>📜 Digital Certificate</h3>
-<p>Auto Generated & Verifiable Certificates</p>
-</div>
+<section id="courses">
+<h2>Our Professional Courses</h2>
+<div class="courses">
+<div class="course"><h3>ADCA</h3><p>Advanced Diploma in Computer Applications with practical training.</p></div>
+<div class="course"><h3>CCC</h3><p>Government approved CCC course for digital literacy.</p></div>
+<div class="course"><h3>O-Level</h3><p>NIELIT O-Level professional computer certification.</p></div>
+<div class="course"><h3>Cyber Security</h3><p>Ethical hacking, cyber law & security fundamentals.</p></div>
+<div class="course"><h3>Tally Prime</h3><p>GST, accounting & real-world business training.</p></div>
 </div>
 </section>
 
-<!-- COURSES -->
-<section id="courses" class="hidden">
-<h2>Our Popular Courses</h2>
-<div class="cards">
-<div class="card">
-<h3>CCC</h3>
-<p>Computer Concepts, MS Office, Internet</p>
-</div>
-<div class="card">
-<h3>O Level</h3>
-<p>IT Tools, Web Design, Python</p>
-</div>
-<div class="card">
-<h3>ADCA</h3>
-<p>Accounting, Tally, GST</p>
-</div>
-<div class="card">
-<h3>Tally Prime</h3>
-<p>Accounting + GST Practical Training</p>
-</div>
+<section id="about">
+<h2>Why Choose Disha Computer?</h2>
+<div class="why">
+<div>✅ 100% Practical Training</div>
+<div>✅ Online Exam + Certificate</div>
+<div>✅ Experienced Faculty</div>
+<div>✅ Job-Oriented Courses</div>
 </div>
 </section>
 
@@ -119,11 +206,6 @@ padding:20px;border-top:3px solid gold;text-align:center;margin-top:40px
 <div class="card">
 <input id="rEmail" placeholder="Email">
 <input id="rPass" type="password" placeholder="Password">
-<select id="rBranch">
-<option>Main Branch</option>
-<option>City Center</option>
-<option>Rural Branch</option>
-</select>
 <button onclick="register()">Register</button>
 </div>
 </section>
@@ -142,179 +224,71 @@ padding:20px;border-top:3px solid gold;text-align:center;margin-top:40px
 <!-- DASHBOARD -->
 <section id="dash" class="hidden">
 <h2>Dashboard</h2>
-<p id="roleTxt"></p>
-
-<div class="card" id="adminPanel">
-<h3>👑 Admin Panel</h3>
-<p>Total Students: <b id="st"></b></p>
-
-<h4>Add MCQ</h4>
-<input id="qtxt" placeholder="Question">
-<input id="o1" placeholder="Option A">
-<input id="o2" placeholder="Option B">
-<input id="o3" placeholder="Option C">
-<input id="o4" placeholder="Option D">
-<select id="ans">
-<option value="0">A Correct</option>
-<option value="1">B Correct</option>
-<option value="2">C Correct</option>
-<option value="3">D Correct</option>
-</select>
-<button onclick="addQ()">Add Question</button>
-<div id="qlist"></div>
+<div class="dashboard">
+<div class="stat">
+<div>Total Students<br><b id="st">0</b></div>
+<div>Total Exams<br><b id="ex">0</b></div>
+<div>Certificates<br><b id="ct">0</b></div>
 </div>
 
-<div class="card" id="studentPanel">
-<h3>Student Panel</h3>
-<div id="result"></div>
-<button onclick="printCert()">Print Certificate</button>
+<div class="card">
+<h3>Online Exam</h3>
+<button onclick="startExam()">Start Exam</button>
+<p id="result"></p>
 </div>
 
 <button onclick="logout()">Logout</button>
-</section>
-
-<!-- EXAM -->
-<section id="exam" class="hidden">
-<h2>Online Exam</h2>
-<p class="timer">Time: <span id="t">15</span>s</p>
-<h3 id="q"></h3>
-<div id="opts"></div>
-</section>
-
-<!-- VERIFY -->
-<section id="verify" class="hidden">
-<div class="card">
-<h2>Certificate Verification</h2>
-<input id="vid" placeholder="Certificate ID">
-<button onclick="verify()">Verify</button>
-<p id="vmsg"></p>
 </div>
 </section>
 
 <footer>
-© 2026 Disha Computer Education | GOD MODE LMS
+© 2026 Disha Computer Education • Professional LMS
 </footer>
 
 <script>
-// ===== USERS =====
-let users = JSON.parse(localStorage.users || "[]");
-if(!users.find(u=>u.email==="admin@disha.com")){
-users.push({email:"admin@disha.com",pass:"admin123",role:"admin"});
-localStorage.users = JSON.stringify(users);
-}
+let users=JSON.parse(localStorage.getItem("users"))||[
+{email:"admin@disha.com",pass:"admin123",role:"admin"}
+];
+let stats=JSON.parse(localStorage.getItem("stats"))||{exam:0,cert:0};
 
-// ===== QUESTIONS =====
-let questions = JSON.parse(localStorage.questions || "[]");
-if(questions.length===0){
-questions.push({
-q:"CPU full form?",
-o:["Central Processing Unit","Control Program Unit","Core Unit","None"],
-a:0
-});
-localStorage.questions=JSON.stringify(questions);
-}
-
-// ===== NAV =====
 function show(id){
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 
-// ===== REGISTER =====
 function register(){
-users.push({email:rEmail.value,pass:rPass.value,branch:rBranch.value,role:"student"});
-localStorage.users=JSON.stringify(users);
-alert("Registration Successful. Now Login.");
+users.push({email:rEmail.value,pass:rPass.value,role:"student"});
+localStorage.setItem("users",JSON.stringify(users));
+alert("Registered Successfully");
 show("login");
 }
 
-// ===== LOGIN (FIXED) =====
 function login(){
 let u=users.find(x=>x.email===email.value && x.pass===pass.value);
 if(!u){msg.innerText="Invalid Login";return;}
-localStorage.user=u.email;
-localStorage.role=u.role;
-localStorage.branch=u.branch||"Main Branch";
+localStorage.setItem("user",u.email);
+localStorage.setItem("role",u.role);
 dashboard();
 }
 
-// ===== DASHBOARD =====
 function dashboard(){
-let r=localStorage.role;
-if(!r){show("login");return;}
+if(!localStorage.getItem("user")){show("login");return;}
 show("dash");
-roleTxt.innerText="Logged in as: "+r;
-adminPanel.style.display=r==="admin"?"block":"none";
-studentPanel.style.display=r==="student"?"block":"none";
 st.innerText=users.filter(u=>u.role==="student").length;
-renderQ();
+ex.innerText=stats.exam;
+ct.innerText=stats.cert;
 }
 
-// ===== LOGOUT =====
-function logout(){
-localStorage.removeItem("user");
-localStorage.removeItem("role");
-show("home");
-}
-
-// ===== ADMIN MCQ =====
-function addQ(){
-if(localStorage.role!=="admin"){alert("Admin only");return;}
-questions.push({
-q:qtxt.value,
-o:[o1.value,o2.value,o3.value,o4.value],
-a:Number(ans.value)
-});
-localStorage.questions=JSON.stringify(questions);
-renderQ();
-}
-function renderQ(){
-qlist.innerHTML="";
-questions.forEach((x,i)=>{
-qlist.innerHTML+=`${x.q}
-<button onclick="questions.splice(${i},1);localStorage.questions=JSON.stringify(questions);renderQ()">❌</button><br>`;
-});
-}
-
-// ===== EXAM =====
-let exam=[],i=0,score=0,time=15,timer;
 function startExam(){
-if(localStorage.role!=="student"){alert("Student login required");return;}
-exam=[...questions].sort(()=>0.5-Math.random()).slice(0,10);
-i=0;score=0;
-show("exam");next();
-}
-function next(){
-if(i>=exam.length){finish();return;}
-time=15;t.innerText=time;
-q.innerText=exam[i].q;
-opts.innerHTML="";
-exam[i].o.forEach((x,idx)=>{
-opts.innerHTML+=`<button onclick="ans(${idx})">${x}</button><br><br>`;
-});
-timer=setInterval(()=>{
-time--;t.innerText=time;
-if(time<=0){clearInterval(timer);i++;next();}
-},1000);
-}
-function ans(a){
-clearInterval(timer);
-if(a===exam[i].a)score++; else score-=0.25;
-i++;next();
-}
-function finish(){
-show("dash");
-let pass=score>=5;
-result.innerHTML=`Score: ${score}<br>Status: ${pass?"PASS":"FAIL"}`;
-if(pass){
-let cid="CERT"+Date.now();
-localStorage.cert=cid;
-}
+stats.exam++;
+localStorage.setItem("stats",JSON.stringify(stats));
+result.innerHTML="Exam started (Demo Mode)";
+dashboard();
 }
 
-// ===== CERT VERIFY =====
-function verify(){
-vmsg.innerText=vid.value===localStorage.cert?"✅ Valid Certificate":"❌ Invalid";
+function logout(){
+localStorage.clear();
+location.reload();
 }
 </script>
 
