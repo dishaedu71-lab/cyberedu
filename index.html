@@ -8,33 +8,23 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Poppins;background:linear-gradient(120deg,#020617,#0f172a,#1e3a8a);color:white}
+body{font-family:Poppins,Arial;background:linear-gradient(120deg,#020617,#0f172a,#1e3a8a);color:white;}
 header{background:#020617;border-bottom:2px solid gold;position:sticky;top:0}
-nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;}
 nav h2{color:gold}
 nav a{color:white;margin:0 10px;text-decoration:none;cursor:pointer}
 nav a:hover{color:gold}
 section{padding:60px 20px}
 .hidden{display:none}
-.hero{text-align:center;padding:80px 20px}
-.hero h1{color:gold;font-size:42px}
+.hero{text-align:center;padding:90px 20px}
+.hero h1{font-size:42px;color:gold}
 .courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
 .course{background:#0f172a;padding:15px;border-radius:10px;text-align:center}
 .card{background:white;color:black;max-width:520px;margin:20px auto;padding:20px;border-radius:10px}
 input,textarea{width:100%;padding:10px;margin:8px 0}
-button{background:#2563eb;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer}
-button:hover{background:#1e40af}
-.listBox{background:#0f172a;padding:10px;margin:5px;border-radius:5px}
-
-#noticeBox{
-display:none;
-background:#fff3cd;
-color:#000;
-border-left:6px solid #ff9800;
-padding:15px;
-margin:20px;
-border-radius:8px;
-}
+button{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:5px}
+.listBox{background:#0f172a;color:white;padding:10px;margin:5px;border-radius:5px}
+#noticeBox{display:none;background:#fff3cd;color:#000;border-left:6px solid orange;padding:15px;border-radius:8px;margin:20px}
 </style>
 </head>
 
@@ -52,19 +42,19 @@ border-radius:8px;
 </nav>
 </header>
 
+<!-- HOME -->
 <section id="home">
 <div class="hero">
-<h1>India’s Trusted Computer Institute</h1>
-<p>Online Exam • Certificate • LMS</p>
+<h1>India’s Trusted Computer Education</h1>
+<p>Professional LMS • Online Exam • Certificates</p>
 </div>
 
 <div id="noticeBox">
-<h3 id="noticeTitle"></h3>
-<p id="noticeMessage"></p>
-<small id="noticeDate"></small>
+<h3 id="nTitle"></h3>
+<p id="nMsg"></p>
+<small id="nDate"></small>
 </div>
 
-<h2 style="text-align:center;color:gold">Courses</h2>
 <div class="courses">
 <div class="course">💻 ADCA</div>
 <div class="course">📘 CCC</div>
@@ -73,16 +63,7 @@ border-radius:8px;
 </div>
 </section>
 
-<section id="login" class="hidden">
-<div class="card">
-<h2>Student Login</h2>
-<input id="lemail" placeholder="Email">
-<input id="lpass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<p id="msg"></p>
-</div>
-</section>
-
+<!-- REGISTER -->
 <section id="register" class="hidden">
 <div class="card">
 <h2>Register</h2>
@@ -93,24 +74,28 @@ border-radius:8px;
 </div>
 </section>
 
+<!-- LOGIN -->
+<section id="login" class="hidden">
+<div class="card">
+<h2>Login</h2>
+<input id="lemail" placeholder="Email">
+<input id="lpass" type="password" placeholder="Password">
+<p id="msg"></p>
+<button onclick="login()">Login</button>
+</div>
+</section>
+
+<!-- STUDENT -->
 <section id="student" class="hidden">
 <div class="card">
 <h2>Dashboard</h2>
 <p>Name: <b id="sname"></b></p>
 <p>ID: <b id="sid"></b></p>
-<button onclick="startOtp()">Start Exam</button>
+<button onclick="startExam()">Start Exam</button>
 </div>
 </section>
 
-<section id="otpSec" class="hidden">
-<div class="card">
-<h2>OTP Verification</h2>
-<p>OTP: <b id="showOtp"></b></p>
-<input id="otpInput" placeholder="Enter OTP">
-<button onclick="verifyOtp()">Verify</button>
-</div>
-</section>
-
+<!-- EXAM -->
 <section id="exam" class="hidden">
 <div class="card">
 <h2>Online Exam</h2>
@@ -120,6 +105,7 @@ border-radius:8px;
 </div>
 </section>
 
+<!-- RESULT -->
 <section id="result" class="hidden">
 <div class="card">
 <h2>Result</h2>
@@ -127,31 +113,33 @@ border-radius:8px;
 </div>
 </section>
 
+<!-- ADMIN -->
 <section id="admin" class="hidden">
 <div class="card">
 <h2>Admin Panel</h2>
 
-<h3>Publish Notice</h3>
-<input id="nTitle" placeholder="Notice Title">
-<textarea id="nMsg" placeholder="Notice Message"></textarea>
+<h3>Add Notice</h3>
+<input id="ntitle" placeholder="Notice Title">
+<textarea id="nmsg" placeholder="Notice Message"></textarea>
 <button onclick="publishNotice()">Publish</button>
 
 <hr>
 
 <h3>Add Question</h3>
-<textarea id="aq"></textarea>
-<input id="ao1"><input id="ao2"><input id="ao3"><input id="ao4">
-<input id="ac" placeholder="Correct option">
-<button onclick="addQuestion()">Add</button>
-
-<div id="questionList"></div>
+<textarea id="aq" placeholder="Question"></textarea>
+<input id="ao1" placeholder="Option 1">
+<input id="ao2" placeholder="Option 2">
+<input id="ao3" placeholder="Option 3">
+<input id="ao4" placeholder="Option 4">
+<input id="ac" placeholder="Correct Option">
+<button onclick="addQuestion()">Add Question</button>
 </div>
 </section>
 
-<!-- 🔥 FIREBASE -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, set, push, onValue } 
+import { getDatabase, ref, push, set, onValue } 
 from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -164,42 +152,34 @@ projectId: "disha-computer-education"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* NOTICE */
+/* NOTICE LIVE */
 onValue(ref(db,"notice"),snap=>{
 if(snap.exists()){
 noticeBox.style.display="block";
-noticeTitle.innerText=snap.val().title;
-noticeMessage.innerText=snap.val().message;
-noticeDate.innerText="📅 "+snap.val().date;
+nTitle.innerText=snap.val().title;
+nMsg.innerText=snap.val().message;
+nDate.innerText="📅 "+snap.val().date;
 }
 });
 
 window.publishNotice=()=>{
 set(ref(db,"notice"),{
-title:nTitle.value,
-message:nMsg.value,
+title:ntitle.value,
+message:nmsg.value,
 date:new Date().toLocaleDateString()
 });
 alert("Notice Published");
 }
 
-/* QUESTIONS */
+/* QUESTIONS LIVE */
 let questions=[];
 onValue(ref(db,"questions"),snap=>{
 questions=[];
 snap.forEach(s=>questions.push(s.val()));
 });
 
-window.addQuestion=()=>{
-push(ref(db,"questions"),{
-q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:ac.value
-});
-alert("Question Added");
-}
-
-/* BASIC LMS */
-let users=[];
-let currentUser=null,examIndex=0,score=0,otpCode=0;
+/* LMS LOGIC (PURANA STYLE) */
+let users=[],currentUser=null,qi=0,score=0;
 
 window.show=id=>{
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
@@ -209,7 +189,7 @@ document.getElementById(id).classList.remove("hidden");
 window.register=()=>{
 let id="DC"+Math.floor(Math.random()*9000);
 users.push({id,name:rname.value,email:remail.value,pass:rpass.value});
-alert("Registered ID: "+id);
+alert("Registered: "+id);
 show("login");
 }
 
@@ -222,34 +202,26 @@ sid.innerText=u.id;
 show("student");
 }
 
-window.startOtp=()=>{
-otpCode=Math.floor(1000+Math.random()*9000);
-showOtp.innerText=otpCode;
-show("otpSec");
-}
-
-window.verifyOtp=()=>{
-if(otpInput.value==otpCode){
-examIndex=0;score=0;
+window.startExam=()=>{
+qi=0;score=0;
 show("exam");
 loadQ();
 }
-}
 
 function loadQ(){
-let q=questions[examIndex];
+let q=questions[qi];
 qtext.innerText=q.q;
 options.innerHTML="";
 [q.o1,q.o2,q.o3,q.o4].forEach(o=>{
-options.innerHTML+=`<label><input type=radio name=ans value="${o}">${o}</label><br>`;
+options.innerHTML+=`<label><input type=radio name=ans value="${o}"> ${o}</label><br>`;
 });
 }
 
 window.nextQuestion=()=>{
 let s=document.querySelector("input[name=ans]:checked");
-if(s && s.value===questions[examIndex].c)score++;
-examIndex++;
-examIndex>=questions.length?showResult():loadQ();
+if(s && s.value===questions[qi].c)score++;
+qi++;
+qi>=questions.length?showResult():loadQ();
 }
 
 function showResult(){
