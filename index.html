@@ -48,7 +48,7 @@ background:white;color:black;
 max-width:520px;margin:20px auto;padding:20px;
 border-radius:10px;
 }
-input,select,textarea{
+input,textarea{
 width:100%;padding:10px;margin:8px 0;
 border:1px solid #ccc;border-radius:5px;
 }
@@ -74,6 +74,7 @@ padding:10px;margin:5px;border-radius:5px;
 <a onclick="show('login')">Student Login</a>
 <a onclick="show('register')">Register</a>
 <a onclick="adminLogin()">Admin</a>
+<a onclick="logout()">Logout</a>
 </div>
 </nav>
 </header>
@@ -130,13 +131,23 @@ padding:10px;margin:5px;border-radius:5px;
 </div>
 </section>
 
+<!-- OTP -->
+<section id="otpSec" class="hidden">
+<div class="card">
+<h2>OTP Verification</h2>
+<p>Your OTP: <b id="showOtp"></b></p>
+<input id="otpInput" placeholder="Enter OTP">
+<button onclick="verifyOtp()">Verify & Start Exam</button>
+</div>
+</section>
+
 <!-- STUDENT DASH -->
 <section id="student" class="hidden">
 <div class="card">
 <h2>Student Dashboard</h2>
 <p>Name: <b id="sname"></b></p>
 <p>ID: <b id="sid"></b></p>
-<button onclick="startExam()">Start Exam</button>
+<button onclick="startOtp()">Start Exam</button>
 </div>
 
 <div class="card">
@@ -149,9 +160,9 @@ padding:10px;margin:5px;border-radius:5px;
 <section id="exam" class="hidden">
 <div class="card">
 <h2>Online Exam</h2>
-<p>Time Left: <b id="timer">00:00</b></p>
+<p>Time Left: <b id="timer">01:00</b></p>
 <p id="qtext"></p>
-<select id="qans"></select>
+<div id="options"></div>
 <button onclick="nextQuestion()">Next Question</button>
 </div>
 </section>
@@ -209,15 +220,20 @@ let currentUser=null;
 let examIndex=0;
 let score=0;
 let timerInterval;
-let totalTime = 60; // seconds
+let totalTime=60;
+let otpCode=0;
+let examRunning=false;
 
 function show(id){
+if(examRunning){
+alert("Exam is running. Cannot leave page!");
+return;
+}
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
-if(id==="home")loadFront();
+if(id==="home") loadFront();
 }
 
-/* REGISTER */
 function register(){
 let id="DC"+Math.floor(1000+Math.random()*9000);
 users.push({id,name:rname.value,email:remail.value,pass:rpass.value,role:"student"});
@@ -226,21 +242,42 @@ alert("Registered! ID: "+id);
 show("login");
 }
 
-/* LOGIN */
 function login(){
 let u=users.find(x=>x.email===lemail.value && x.pass===lpass.value);
 if(!u){msg.innerText="Invalid Login";return;}
 currentUser=u;
+if(u.role==="admin"){show("admin");loadAdmin();}
+else{
 show("student");
 sname.innerText=u.name;
 sid.innerText=u.id;
 loadStudentHistory();
 }
+}
 
-/* START EXAM WITH TIMER */
+function logout(){
+currentUser=null;
+examRunning=false;
+clearInterval(timerInterval);
+show("home");
+}
+
+/* OTP */
+function startOtp(){
+otpCode=Math.floor(1000+Math.random()*9000);
+show("otpSec");
+showOtp.innerText=otpCode;
+}
+function verifyOtp(){
+if(otpInput.value==otpCode) startExam();
+else alert("Wrong OTP");
+}
+
+/* EXAM */
 function startExam(){
-if(questions.length==0){alert("No Questions Added");return;}
-examIndex=0; score=0;
+if(questions.length==0){alert("No Questions");return;}
+examIndex=0;score=0;
+examRunning=true;
 show("exam");
 startTimer();
 loadQuestion();
@@ -248,11 +285,10 @@ loadQuestion();
 
 function startTimer(){
 let time=totalTime;
-timer.innerText="01:00";
 timerInterval=setInterval(()=>{
 time--;
-let m = String(Math.floor(time/60)).padStart(2,'0');
-let s = String(time%60).padStart(2,'0');
+let m=String(Math.floor(time/60)).padStart(2,'0');
+let s=String(time%60).padStart(2,'0');
 timer.innerText=m+":"+s;
 if(time<=0){
 clearInterval(timerInterval);
@@ -261,19 +297,18 @@ showResult();
 },1000);
 }
 
-/* LOAD QUESTION */
 function loadQuestion(){
 let q=questions[examIndex];
 qtext.innerText=(examIndex+1)+". "+q.q;
-qans.innerHTML="";
-[q.o1,q.o2,q.o3,q.o4].forEach(o=>{
-let op=document.createElement("option");
-op.text=o; qans.add(op);
+options.innerHTML="";
+[q.o1,q.o2,q.o3,q.o4].forEach(opt=>{
+options.innerHTML+=`<label><input type="radio" name="ans" value="${opt}"> ${opt}</label><br>`;
 });
 }
 
 function nextQuestion(){
-if(qans.value===questions[examIndex].c) score++;
+let selected=document.querySelector('input[name="ans"]:checked');
+if(selected && selected.value===questions[examIndex].c) score++;
 examIndex++;
 if(examIndex>=questions.length){
 clearInterval(timerInterval);
@@ -281,78 +316,50 @@ showResult();
 }else loadQuestion();
 }
 
-/* RESULT */
 function showResult(){
+examRunning=false;
 show("result");
 rname.innerText=currentUser.name;
 rid.innerText=currentUser.id;
 rmarks.innerText=score+" / "+questions.length;
-
-results.push({
-name:currentUser.name,
-id:currentUser.id,
-marks:score,
-total:questions.length
-});
+results.push({name:currentUser.name,id:currentUser.id,marks:score,total:questions.length});
 localStorage.setItem("results",JSON.stringify(results));
 }
 
-/* CERTIFICATE PDF */
+/* HISTORY */
+function loadStudentHistory(){
+studentHistory.innerHTML="";
+results.filter(r=>r.id===currentUser.id).forEach(r=>{
+studentHistory.innerHTML+=`<div class='listBox'>Marks: ${r.marks}/${r.total}</div>`;
+});
+}
+
+/* CERTIFICATE */
 function downloadCert(){
-let text = `
-DISHA COMPUTER EDUCATION
-
-Certificate of Achievement
-
-This is to certify that
-
-${currentUser.name}
-(ID: ${currentUser.id})
-
-has successfully completed the Online Examination.
-
-Marks: ${score} / ${questions.length}
-
-Authorized Signatory
-`;
-
-let blob = new Blob([text],{type:"application/pdf"});
+let text=`DISHA COMPUTER EDUCATION\nCertificate of Achievement\n\nThis certifies that\n${currentUser.name} (${currentUser.id})\nMarks: ${score}/${questions.length}`;
+let blob=new Blob([text],{type:"application/pdf"});
 let link=document.createElement("a");
 link.href=URL.createObjectURL(blob);
 link.download="Certificate.pdf";
 link.click();
 }
 
-/* STUDENT HISTORY */
-function loadStudentHistory(){
-studentHistory.innerHTML="";
-results.filter(r=>r.id===currentUser.id)
-.forEach(r=>{
-studentHistory.innerHTML+=`<div class='listBox'>
-Marks: ${r.marks}/${r.total}
-</div>`;
-});
-}
-
-/* ADMIN LOGIN */
+/* ADMIN */
 function adminLogin(){
 let e=prompt("Admin Email");
 let p=prompt("Admin Password");
 let u=users.find(x=>x.email===e && x.pass===p && x.role==="admin");
 if(!u){alert("Wrong Admin Login");return;}
+currentUser=u;
 show("admin");
 loadAdmin();
 }
 
-/* ADMIN FUNCTIONS */
 function addQuestion(){
-questions.push({
-q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:ac.value
-});
+questions.push({q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:ac.value});
 localStorage.setItem("questions",JSON.stringify(questions));
 loadAdmin();
 }
-
 function deleteQuestion(i){
 questions.splice(i,1);
 localStorage.setItem("questions",JSON.stringify(questions));
@@ -362,39 +369,31 @@ loadAdmin();
 function addFront(){
 frontBoxes.push(frontText.value);
 localStorage.setItem("frontBoxes",JSON.stringify(frontBoxes));
-loadAdmin(); loadFront();
+loadAdmin();loadFront();
 }
-
 function deleteFront(i){
 frontBoxes.splice(i,1);
 localStorage.setItem("frontBoxes",JSON.stringify(frontBoxes));
-loadAdmin(); loadFront();
+loadAdmin();loadFront();
 }
 
 function loadFront(){
 frontContent.innerHTML="";
-frontBoxes.forEach(b=>{
-frontContent.innerHTML+=`<div class='course'>${b}</div>`;
-});
+frontBoxes.forEach(b=>frontContent.innerHTML+=`<div class='course'>${b}</div>`);
 }
 
 function loadAdmin(){
 questionList.innerHTML="";
 questions.forEach((q,i)=>{
-questionList.innerHTML+=`<div class='listBox'>${q.q}
-<button onclick="deleteQuestion(${i})">Delete</button></div>`;
+questionList.innerHTML+=`<div class='listBox'>${q.q}<button onclick="deleteQuestion(${i})">Delete</button></div>`;
 });
 frontList.innerHTML="";
 frontBoxes.forEach((f,i)=>{
-frontList.innerHTML+=`<div class='listBox'>${f}
-<button onclick="deleteFront(${i})">Delete</button></div>`;
+frontList.innerHTML+=`<div class='listBox'>${f}<button onclick="deleteFront(${i})">Delete</button></div>`;
 });
-
 adminResults.innerHTML="";
 results.forEach(r=>{
-adminResults.innerHTML+=`<div class='listBox'>
-${r.name} (${r.id}) → ${r.marks}/${r.total}
-</div>`;
+adminResults.innerHTML+=`<div class='listBox'>${r.name} (${r.id}) → ${r.marks}/${r.total}</div>`;
 });
 }
 
