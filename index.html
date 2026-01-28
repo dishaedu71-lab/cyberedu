@@ -56,7 +56,7 @@ label{cursor:pointer;}
 <div id="frontContent" class="courses"></div>
 </section>
 
-<section id="courses">
+<section id="courses" class="hidden">
 <h2>Our Courses</h2>
 <div class="courses">
 <div class="course">💻 ADCA</div>
@@ -66,7 +66,7 @@ label{cursor:pointer;}
 </div>
 </section>
 
-<section id="about">
+<section id="about" class="hidden">
 <h2>Why Choose Us</h2>
 <div class="courses">
 <div class="course">100% Practical</div>
@@ -157,7 +157,7 @@ label{cursor:pointer;}
 
 <hr>
 
-<h3>Add Question (4 Options)</h3>
+<h3>Add Question</h3>
 <textarea id="aq" placeholder="Question"></textarea>
 <input id="ao1" placeholder="Option 1">
 <input id="ao2" placeholder="Option 2">
@@ -191,11 +191,8 @@ let totalTime=60;
 let otpCode=0;
 let examRunning=false;
 
+/* ✅ FIXED SHOW FUNCTION (NO ALERT) */
 function show(id){
-if(examRunning){
-alert("Exam is running. Cannot leave page!");
-return;
-}
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 if(id==="home") loadFront();
@@ -242,7 +239,7 @@ examIndex=0; score=0;
 show("exam");
 startTimer();
 loadQuestion();
-} else alert("Wrong OTP");
+}else alert("Wrong OTP");
 }
 
 /* EXAM */
@@ -293,7 +290,7 @@ studentHistory.innerHTML+=`<div class='listBox'>Marks: ${r.marks}/${r.total}</di
 }
 
 function downloadCert(){
-let text=`DISHA COMPUTER EDUCATION\nCertificate of Achievement\n\nThis certifies that\n${currentUser.name} (${currentUser.id})\nMarks: ${score}/${questions.length}`;
+let text=`DISHA COMPUTER EDUCATION\nCertificate of Achievement\n\n${currentUser.name} (${currentUser.id})\nMarks: ${score}/${questions.length}`;
 let blob=new Blob([text],{type:"application/pdf"});
 let link=document.createElement("a");
 link.href=URL.createObjectURL(blob);
