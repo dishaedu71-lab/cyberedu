@@ -45,7 +45,7 @@ background:#0f172a;padding:15px;border-radius:10px;text-align:center;
 
 .card{
 background:white;color:black;
-max-width:500px;margin:20px auto;padding:20px;
+max-width:520px;margin:20px auto;padding:20px;
 border-radius:10px;
 }
 input,select,textarea{
@@ -56,7 +56,6 @@ button{
 padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:5px;
 }
 button:hover{background:#1e40af}
-
 .listBox{
 background:#0f172a;color:white;
 padding:10px;margin:5px;border-radius:5px;
@@ -85,12 +84,10 @@ padding:10px;margin:5px;border-radius:5px;
 <h1>India’s Trusted Computer Education</h1>
 <p>Professional LMS • Online Exam • Certificates</p>
 </div>
-
 <h2>Extra Website Content</h2>
 <div id="frontContent" class="courses"></div>
 </section>
 
-<!-- COURSES -->
 <section id="courses">
 <h2>Our Courses</h2>
 <div class="courses">
@@ -101,7 +98,6 @@ padding:10px;margin:5px;border-radius:5px;
 </div>
 </section>
 
-<!-- ABOUT -->
 <section id="about">
 <h2>Why Choose Us</h2>
 <div class="courses">
@@ -134,23 +130,18 @@ padding:10px;margin:5px;border-radius:5px;
 </div>
 </section>
 
-<!-- OTP -->
-<section id="otpSec" class="hidden">
-<div class="card">
-<h2>OTP Verification</h2>
-<p>Your OTP: <b id="showOtp"></b></p>
-<input id="otpInput" placeholder="Enter OTP">
-<button onclick="verifyOtp()">Verify & Start Exam</button>
-</div>
-</section>
-
 <!-- STUDENT DASH -->
 <section id="student" class="hidden">
 <div class="card">
 <h2>Student Dashboard</h2>
 <p>Name: <b id="sname"></b></p>
 <p>ID: <b id="sid"></b></p>
-<button onclick="startOtp()">Start Exam</button>
+<button onclick="startExam()">Start Exam</button>
+</div>
+
+<div class="card">
+<h3>Result History</h3>
+<div id="studentHistory"></div>
 </div>
 </section>
 
@@ -158,10 +149,9 @@ padding:10px;margin:5px;border-radius:5px;
 <section id="exam" class="hidden">
 <div class="card">
 <h2>Online Exam</h2>
+<p>Time Left: <b id="timer">00:00</b></p>
 <p id="qtext"></p>
-
 <select id="qans"></select>
-
 <button onclick="nextQuestion()">Next Question</button>
 </div>
 </section>
@@ -173,6 +163,7 @@ padding:10px;margin:5px;border-radius:5px;
 <p>Name: <b id="rname"></b></p>
 <p>ID: <b id="rid"></b></p>
 <p>Marks: <b id="rmarks"></b></p>
+<button onclick="downloadCert()">Download Certificate PDF</button>
 </div>
 </section>
 
@@ -199,6 +190,10 @@ padding:10px;margin:5px;border-radius:5px;
 
 <h3>Question Bank</h3>
 <div id="questionList"></div>
+
+<hr>
+<h3>All Student Results</h3>
+<div id="adminResults"></div>
 </div>
 </section>
 
@@ -208,11 +203,13 @@ let users = JSON.parse(localStorage.getItem("users")) || [
 ];
 let questions = JSON.parse(localStorage.getItem("questions")) || [];
 let frontBoxes = JSON.parse(localStorage.getItem("frontBoxes")) || [];
+let results = JSON.parse(localStorage.getItem("results")) || [];
 
 let currentUser=null;
-let otpCode=0;
 let examIndex=0;
 let score=0;
+let timerInterval;
+let totalTime = 60; // seconds
 
 function show(id){
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
@@ -237,27 +234,34 @@ currentUser=u;
 show("student");
 sname.innerText=u.name;
 sid.innerText=u.id;
+loadStudentHistory();
 }
 
-/* OTP */
-function startOtp(){
-otpCode=Math.floor(1000+Math.random()*9000);
-show("otpSec");
-showOtp.innerText=otpCode;
-}
-function verifyOtp(){
-if(otpInput.value==otpCode){startExam();}
-else alert("Wrong OTP");
-}
-
-/* EXAM SYSTEM */
+/* START EXAM WITH TIMER */
 function startExam(){
 if(questions.length==0){alert("No Questions Added");return;}
 examIndex=0; score=0;
 show("exam");
+startTimer();
 loadQuestion();
 }
 
+function startTimer(){
+let time=totalTime;
+timer.innerText="01:00";
+timerInterval=setInterval(()=>{
+time--;
+let m = String(Math.floor(time/60)).padStart(2,'0');
+let s = String(time%60).padStart(2,'0');
+timer.innerText=m+":"+s;
+if(time<=0){
+clearInterval(timerInterval);
+showResult();
+}
+},1000);
+}
+
+/* LOAD QUESTION */
 function loadQuestion(){
 let q=questions[examIndex];
 qtext.innerText=(examIndex+1)+". "+q.q;
@@ -271,15 +275,63 @@ op.text=o; qans.add(op);
 function nextQuestion(){
 if(qans.value===questions[examIndex].c) score++;
 examIndex++;
-if(examIndex>=questions.length){showResult();}
-else loadQuestion();
+if(examIndex>=questions.length){
+clearInterval(timerInterval);
+showResult();
+}else loadQuestion();
 }
 
+/* RESULT */
 function showResult(){
 show("result");
 rname.innerText=currentUser.name;
 rid.innerText=currentUser.id;
 rmarks.innerText=score+" / "+questions.length;
+
+results.push({
+name:currentUser.name,
+id:currentUser.id,
+marks:score,
+total:questions.length
+});
+localStorage.setItem("results",JSON.stringify(results));
+}
+
+/* CERTIFICATE PDF */
+function downloadCert(){
+let text = `
+DISHA COMPUTER EDUCATION
+
+Certificate of Achievement
+
+This is to certify that
+
+${currentUser.name}
+(ID: ${currentUser.id})
+
+has successfully completed the Online Examination.
+
+Marks: ${score} / ${questions.length}
+
+Authorized Signatory
+`;
+
+let blob = new Blob([text],{type:"application/pdf"});
+let link=document.createElement("a");
+link.href=URL.createObjectURL(blob);
+link.download="Certificate.pdf";
+link.click();
+}
+
+/* STUDENT HISTORY */
+function loadStudentHistory(){
+studentHistory.innerHTML="";
+results.filter(r=>r.id===currentUser.id)
+.forEach(r=>{
+studentHistory.innerHTML+=`<div class='listBox'>
+Marks: ${r.marks}/${r.total}
+</div>`;
+});
 }
 
 /* ADMIN LOGIN */
@@ -292,40 +344,31 @@ show("admin");
 loadAdmin();
 }
 
-/* ADMIN ADD QUESTION */
+/* ADMIN FUNCTIONS */
 function addQuestion(){
 questions.push({
-q:aq.value,
-o1:ao1.value,
-o2:ao2.value,
-o3:ao3.value,
-o4:ao4.value,
-c:ac.value
+q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:ac.value
 });
 localStorage.setItem("questions",JSON.stringify(questions));
 loadAdmin();
 }
 
-/* DELETE QUESTION */
 function deleteQuestion(i){
 questions.splice(i,1);
 localStorage.setItem("questions",JSON.stringify(questions));
 loadAdmin();
 }
 
-/* FRONT WEBSITE BOX */
 function addFront(){
 frontBoxes.push(frontText.value);
 localStorage.setItem("frontBoxes",JSON.stringify(frontBoxes));
-loadAdmin();
-loadFront();
+loadAdmin(); loadFront();
 }
 
 function deleteFront(i){
 frontBoxes.splice(i,1);
 localStorage.setItem("frontBoxes",JSON.stringify(frontBoxes));
-loadAdmin();
-loadFront();
+loadAdmin(); loadFront();
 }
 
 function loadFront(){
@@ -335,7 +378,6 @@ frontContent.innerHTML+=`<div class='course'>${b}</div>`;
 });
 }
 
-/* LOAD ADMIN DATA */
 function loadAdmin(){
 questionList.innerHTML="";
 questions.forEach((q,i)=>{
@@ -347,6 +389,13 @@ frontBoxes.forEach((f,i)=>{
 frontList.innerHTML+=`<div class='listBox'>${f}
 <button onclick="deleteFront(${i})">Delete</button></div>`;
 });
+
+adminResults.innerHTML="";
+results.forEach(r=>{
+adminResults.innerHTML+=`<div class='listBox'>
+${r.name} (${r.id}) → ${r.marks}/${r.total}
+</div>`;
+});
 }
 
 show("home");
@@ -354,4 +403,3 @@ show("home");
 
 </body>
 </html>
-
