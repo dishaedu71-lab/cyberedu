@@ -5,61 +5,28 @@
 <title>Disha Computer Education LMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-font-family:Poppins,Arial;
-background:linear-gradient(120deg,#020617,#0f172a,#1e3a8a);
-color:white;
-}
+body{font-family:Poppins,Arial;background:linear-gradient(120deg,#020617,#0f172a,#1e3a8a);color:white;}
 a,button{cursor:pointer}
-header{
-background:#020617;
-border-bottom:2px solid gold;
-position:sticky;top:0;z-index:999;
-}
-nav{
-display:flex;justify-content:space-between;align-items:center;
-padding:15px 30px;
-}
+header{background:#020617;border-bottom:2px solid gold;position:sticky;top:0;z-index:999;}
+nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;}
 nav h2{color:gold}
 nav a{color:white;margin:0 10px;text-decoration:none}
 nav a:hover{color:gold}
-
 section{padding:60px 20px}
 .hidden{display:none}
 h2{text-align:center;color:gold;margin-bottom:20px}
-
 .hero{text-align:center;padding:90px 20px}
 .hero h1{font-size:42px;color:gold}
-
-.courses{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
-}
-.course{
-background:#0f172a;padding:15px;border-radius:10px;text-align:center;
-}
-
-.card{
-background:white;color:black;
-max-width:520px;margin:20px auto;padding:20px;
-border-radius:10px;
-}
-input,textarea{
-width:100%;padding:10px;margin:8px 0;
-border:1px solid #ccc;border-radius:5px;
-}
-button{
-padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:5px;
-}
+.courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;}
+.course{background:#0f172a;padding:15px;border-radius:10px;text-align:center;}
+.card{background:white;color:black;max-width:520px;margin:20px auto;padding:20px;border-radius:10px;}
+input,textarea{width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:5px;}
+button{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:5px;}
 button:hover{background:#1e40af}
-.listBox{
-background:#0f172a;color:white;
-padding:10px;margin:5px;border-radius:5px;
-}
+.listBox{background:#0f172a;color:white;padding:10px;margin:5px;border-radius:5px;}
+label{cursor:pointer;}
 </style>
 </head>
 <body>
@@ -269,31 +236,25 @@ show("otpSec");
 showOtp.innerText=otpCode;
 }
 function verifyOtp(){
-if(otpInput.value==otpCode) startExam();
-else alert("Wrong OTP");
-}
-
-/* EXAM */
-function startExam(){
-if(questions.length==0){alert("No Questions");return;}
-examIndex=0;score=0;
+if(otpInput.value==otpCode){
 examRunning=true;
+examIndex=0; score=0;
 show("exam");
 startTimer();
 loadQuestion();
+} else alert("Wrong OTP");
 }
 
+/* EXAM */
 function startTimer(){
 let time=totalTime;
+timer.innerText="01:00";
 timerInterval=setInterval(()=>{
 time--;
 let m=String(Math.floor(time/60)).padStart(2,'0');
 let s=String(time%60).padStart(2,'0');
 timer.innerText=m+":"+s;
-if(time<=0){
-clearInterval(timerInterval);
-showResult();
-}
+if(time<=0){clearInterval(timerInterval); showResult();}
 },1000);
 }
 
@@ -310,10 +271,8 @@ function nextQuestion(){
 let selected=document.querySelector('input[name="ans"]:checked');
 if(selected && selected.value===questions[examIndex].c) score++;
 examIndex++;
-if(examIndex>=questions.length){
-clearInterval(timerInterval);
-showResult();
-}else loadQuestion();
+if(examIndex>=questions.length){clearInterval(timerInterval); showResult();}
+else loadQuestion();
 }
 
 function showResult(){
@@ -326,7 +285,6 @@ results.push({name:currentUser.name,id:currentUser.id,marks:score,total:question
 localStorage.setItem("results",JSON.stringify(results));
 }
 
-/* HISTORY */
 function loadStudentHistory(){
 studentHistory.innerHTML="";
 results.filter(r=>r.id===currentUser.id).forEach(r=>{
@@ -334,7 +292,6 @@ studentHistory.innerHTML+=`<div class='listBox'>Marks: ${r.marks}/${r.total}</di
 });
 }
 
-/* CERTIFICATE */
 function downloadCert(){
 let text=`DISHA COMPUTER EDUCATION\nCertificate of Achievement\n\nThis certifies that\n${currentUser.name} (${currentUser.id})\nMarks: ${score}/${questions.length}`;
 let blob=new Blob([text],{type:"application/pdf"});
@@ -344,7 +301,6 @@ link.download="Certificate.pdf";
 link.click();
 }
 
-/* ADMIN */
 function adminLogin(){
 let e=prompt("Admin Email");
 let p=prompt("Admin Password");
@@ -365,7 +321,6 @@ questions.splice(i,1);
 localStorage.setItem("questions",JSON.stringify(questions));
 loadAdmin();
 }
-
 function addFront(){
 frontBoxes.push(frontText.value);
 localStorage.setItem("frontBoxes",JSON.stringify(frontBoxes));
@@ -376,29 +331,20 @@ frontBoxes.splice(i,1);
 localStorage.setItem("frontBoxes",JSON.stringify(frontBoxes));
 loadAdmin();loadFront();
 }
-
 function loadFront(){
 frontContent.innerHTML="";
 frontBoxes.forEach(b=>frontContent.innerHTML+=`<div class='course'>${b}</div>`);
 }
-
 function loadAdmin(){
 questionList.innerHTML="";
-questions.forEach((q,i)=>{
-questionList.innerHTML+=`<div class='listBox'>${q.q}<button onclick="deleteQuestion(${i})">Delete</button></div>`;
-});
+questions.forEach((q,i)=>{questionList.innerHTML+=`<div class='listBox'>${q.q}<button onclick="deleteQuestion(${i})">Delete</button></div>`;});
 frontList.innerHTML="";
-frontBoxes.forEach((f,i)=>{
-frontList.innerHTML+=`<div class='listBox'>${f}<button onclick="deleteFront(${i})">Delete</button></div>`;
-});
+frontBoxes.forEach((f,i)=>{frontList.innerHTML+=`<div class='listBox'>${f}<button onclick="deleteFront(${i})">Delete</button></div>`;});
 adminResults.innerHTML="";
-results.forEach(r=>{
-adminResults.innerHTML+=`<div class='listBox'>${r.name} (${r.id}) → ${r.marks}/${r.total}</div>`;
-});
+results.forEach(r=>{adminResults.innerHTML+=`<div class='listBox'>${r.name} (${r.id}) → ${r.marks}/${r.total}</div>`;});
 }
 
 show("home");
 </script>
-
 </body>
 </html>
