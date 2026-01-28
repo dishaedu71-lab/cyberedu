@@ -2,41 +2,42 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Disha Computer Education | INSANE LMS</title>
+<title>Disha Computer Education | GOD MODE LMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{margin:0;font-family:Poppins,Arial;background:#0f172a;color:white}
-header{background:#020617;padding:20px;text-align:center}
-nav a{color:#facc15;margin:10px;font-weight:bold;cursor:pointer}
+body{margin:0;font-family:Poppins,Arial;background:#020617;color:white}
+header{background:#020617;padding:20px;text-align:center;border-bottom:3px solid gold}
+nav a{color:gold;margin:10px;font-weight:bold;cursor:pointer}
 section{padding:30px;text-align:center}
 .hidden{display:none}
-.card{background:white;color:black;padding:20px;margin:20px auto;width:500px;border-radius:12px}
-input,select{width:90%;padding:8px;margin:5px}
-button{padding:8px 18px;background:#2563eb;color:white;border:none;border-radius:6px}
+.card{background:white;color:black;padding:25px;margin:20px auto;width:540px;border-radius:14px}
+input,select{width:90%;padding:10px;margin:6px}
+button{padding:10px 22px;background:#2563eb;color:white;border:none;border-radius:8px}
 button:hover{background:#1e40af}
-.timer{color:red;font-weight:bold}
-.cert{border:6px double black;padding:30px;font-family:Georgia}
-footer{background:#020617;padding:15px}
+.timer{color:red;font-size:18px;font-weight:bold}
+.cert,.admit{border:8px double black;padding:30px;font-family:Georgia}
+.rank{font-weight:bold;color:green}
+footer{background:#020617;padding:15px;border-top:3px solid gold}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Disha Computer Education</h1>
-<p>INSANE LMS – Exam | Admin | Certificate</p>
+<h1>👑 Disha Computer Education</h1>
+<p>GOD MODE Learning Management System</p>
 <nav>
 <a onclick="show('home')">Home</a>
 <a onclick="show('login')">Login</a>
 <a onclick="show('register')">Register</a>
 <a onclick="dashboard()">Dashboard</a>
-<a onclick="startExam()">Exam</a>
+<a onclick="show('verify')">Verify</a>
 </nav>
 </header>
 
 <section id="home">
-<h2>Professional Learning Management System</h2>
-<p>Admin Controlled • Secure • Advanced</p>
+<h2>Institute • Franchise • Exam • Certificate • Ranking</h2>
+<p>Ultimate GOD MODE LMS</p>
 </section>
 
 <section id="register" class="hidden">
@@ -44,6 +45,11 @@ footer{background:#020617;padding:15px}
 <div class="card">
 <input id="rEmail" placeholder="Email">
 <input id="rPass" placeholder="Password">
+<select id="rBranch">
+<option>Main Branch</option>
+<option>City Center</option>
+<option>Rural Branch</option>
+</select>
 <button onclick="register()">Register</button>
 </div>
 </section>
@@ -63,30 +69,32 @@ footer{background:#020617;padding:15px}
 <p id="roleTxt"></p>
 
 <div class="card" id="adminPanel">
-<h3>Admin MCQ Control</h3>
+<h3>👑 GOD MODE ADMIN</h3>
+<p>Total Students: <b id="st"></b></p>
+<p>Total Exams: <b id="ex"></b></p>
+<p>Certificates Issued: <b id="ct"></b></p>
 
-<select id="cat">
-<option>Basic Computer</option>
-<option>HTML</option>
-<option>JavaScript</option>
-</select>
-
-<input id="ques" placeholder="Question">
+<h4>Add MCQ</h4>
+<input id="qtxt" placeholder="Question">
 <input id="o1" placeholder="Option A">
 <input id="o2" placeholder="Option B">
 <select id="ans">
-<option value="0">Option A Correct</option>
-<option value="1">Option B Correct</option>
+<option value="0">A Correct</option>
+<option value="1">B Correct</option>
 </select>
-
 <button onclick="addQ()">Add Question</button>
 <div id="qlist"></div>
+
+<h4>🏆 Leaderboard</h4>
+<div id="leader"></div>
 </div>
 
 <div class="card" id="studentPanel">
-<h3>Result</h3>
+<h3>Student Panel</h3>
+<p><b>Basic Computer Exam</b></p>
+<button onclick="showAdmit()">Generate Admit Card</button>
+<button onclick="startExam()">Start Exam</button>
 <div id="result"></div>
-<button onclick="printResult()">Result PDF</button>
 <button onclick="printCert()">Print Certificate</button>
 </div>
 
@@ -94,13 +102,22 @@ footer{background:#020617;padding:15px}
 </section>
 
 <section id="exam" class="hidden">
-<h2>Online MCQ Exam</h2>
+<h2>Online Exam</h2>
 <p class="timer">Time: <span id="t">15</span>s</p>
 <h3 id="q"></h3>
 <div id="opts"></div>
 </section>
 
-<footer>© 2026 Disha Computer Education</footer>
+<section id="verify" class="hidden">
+<h2>Certificate Verification</h2>
+<div class="card">
+<input id="vid" placeholder="Certificate ID">
+<button onclick="verify()">Verify</button>
+<p id="vmsg"></p>
+</div>
+</section>
+
+<footer>© 2026 Disha Computer Education – GOD MODE</footer>
 
 <script>
 // USERS
@@ -110,10 +127,15 @@ let users=JSON.parse(localStorage.getItem("users"))||[
 
 // QUESTIONS
 let questions=JSON.parse(localStorage.getItem("questions"))||[
-{c:"Basic Computer",q:"CPU full form?",o:["Central Processing Unit","Computer Power Unit"],a:0},
-{c:"HTML",q:"HTML stands for?",o:["Hyper Text Markup Language","High Text Machine"],a:0},
-{c:"JavaScript",q:"JS is?",o:["Programming","OS"],a:0}
+{q:"CPU full form?",o:["Central Processing Unit","Computer Power Unit"],a:0},
+{q:"RAM is?",o:["Memory","Storage"],a:0},
+{q:"HTML stands for?",o:["Hyper Text Markup Language","High Text"],a:0},
+{q:"JS is?",o:["Programming","OS"],a:0}
 ];
+
+// STATS
+let stats=JSON.parse(localStorage.getItem("stats"))||{exam:0,cert:0};
+let ranks=JSON.parse(localStorage.getItem("ranks"))||[];
 
 // NAV
 function show(id){
@@ -123,17 +145,18 @@ document.getElementById(id).classList.remove("hidden");
 
 // REGISTER
 function register(){
-users.push({email:rEmail.value,pass:rPass.value,role:"student"});
+users.push({email:rEmail.value,pass:rPass.value,branch:rBranch.value,role:"student"});
 localStorage.setItem("users",JSON.stringify(users));
-alert("Registered");
+alert("Registered Successfully");
 }
 
 // LOGIN
 function login(){
 let u=users.find(x=>x.email===email.value && x.pass===pass.value);
-if(!u){msg.innerText="Invalid";return;}
+if(!u){msg.innerText="Invalid Login";return;}
 localStorage.setItem("user",u.email);
 localStorage.setItem("role",u.role);
+localStorage.setItem("branch",u.branch||"Main Branch");
 dashboard();
 }
 
@@ -145,37 +168,48 @@ show("dash");
 roleTxt.innerText="Role: "+r;
 adminPanel.style.display=r==="admin"?"block":"none";
 studentPanel.style.display=r==="student"?"block":"none";
-renderQ();
+st.innerText=users.filter(u=>u.role==="student").length;
+ex.innerText=stats.exam;
+ct.innerText=stats.cert;
+renderQ();renderLeader();
 }
 
 // LOGOUT
 function logout(){localStorage.clear();show("home");}
 
-// ADMIN ADD / DELETE
+// ADMIN
 function addQ(){
-questions.push({
-c:cat.value,q:ques.value,o:[o1.value,o2.value],a:Number(ans.value)
-});
-localStorage.setItem("questions",JSON.stringify(questions));
-renderQ();
-}
-function delQ(i){
-questions.splice(i,1);
+questions.push({q:qtxt.value,o:[o1.value,o2.value],a:Number(ans.value)});
 localStorage.setItem("questions",JSON.stringify(questions));
 renderQ();
 }
 function renderQ(){
 qlist.innerHTML="";
 questions.forEach((x,i)=>{
-qlist.innerHTML+=`<p>${x.c}: ${x.q} <button onclick="delQ(${i})">❌</button></p>`;
+qlist.innerHTML+=`${x.q} <button onclick="questions.splice(${i},1);localStorage.setItem('questions',JSON.stringify(questions));renderQ()">❌</button><br>`;
 });
+}
+
+// ADMIT CARD
+function showAdmit(){
+let w=window.open("");
+w.document.write(`<div class='admit'>
+<h1>Disha Computer Education</h1>
+<h2>Admit Card</h2>
+<p>Name: ${localStorage.getItem("user")}</p>
+<p>Branch: ${localStorage.getItem("branch")}</p>
+<p>Roll No: ROLL${Date.now()}</p>
+<p>Exam: Basic Computer</p>
+</div>`);
+w.print();
 }
 
 // EXAM
 let exam=[],i=0,score=0,time=15,timer;
 function startExam(){
-exam=[...questions].sort(()=>0.5-Math.random()).slice(0,20);
+exam=[...questions].sort(()=>0.5-Math.random()).slice(0,10);
 i=0;score=0;
+stats.exam++;localStorage.setItem("stats",JSON.stringify(stats));
 show("exam");next();
 }
 function next(){
@@ -199,39 +233,48 @@ i++;next();
 }
 function finish(){
 show("dash");
-let res=`Score: ${score}<br>Status: ${score>=10?"PASS":"FAIL"}`;
-result.innerHTML=res;
-localStorage.setItem("res",res);
-if(score>=10){
-localStorage.setItem("cert","CERT"+Date.now());
+let pass=score>=5;
+result.innerHTML=`Score: ${score} <br>Status: ${pass?"PASS":"FAIL"}`;
+if(pass){
+let cid="CERT"+Date.now();
+localStorage.setItem("cert",cid);
+stats.cert++;localStorage.setItem("stats",JSON.stringify(stats));
+ranks.push({name:localStorage.getItem("user"),score});
+localStorage.setItem("ranks",JSON.stringify(ranks));
 }
-}
-
-// PDF
-function printResult(){
-let w=window.open("");
-w.document.write("<h2>Result</h2>"+localStorage.getItem("res"));
-w.print();
+dashboard();
 }
 
-// CERTIFICATE WITH QR
+// LEADERBOARD
+function renderLeader(){
+leader.innerHTML="";
+ranks.sort((a,b)=>b.score-a.score).slice(0,5).forEach((x,i)=>{
+leader.innerHTML+=`${i+1}. ${x.name} – ${x.score}<br>`;
+});
+}
+
+// CERTIFICATE
 function printCert(){
 let id=localStorage.getItem("cert");
-let name=localStorage.getItem("user");
-let qr=`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${id}-${name}`;
+if(!id){alert("No Certificate");return;}
 let w=window.open("");
-w.document.write(`
-<div class='cert'>
+w.document.write(`<div class='cert'>
 <h1>Disha Computer Education</h1>
 <h2>Certificate of Achievement</h2>
 <p>This certifies that</p>
-<h2>${name}</h2>
-<p>has passed the examination</p>
+<h2>${localStorage.getItem("user")}</h2>
+<p>Branch: ${localStorage.getItem("branch")}</p>
 <p>Certificate ID: ${id}</p>
-<img src="${qr}">
-</div>
-`);
+</div>`);
 w.print();
+}
+
+// VERIFY
+function verify(){
+let id=localStorage.getItem("cert");
+vmsg.innerHTML=(vid.value===id)
+?"✅ Valid Certificate"
+:"❌ Invalid Certificate";
 }
 </script>
 </body>
