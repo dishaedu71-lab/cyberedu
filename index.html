@@ -12,11 +12,8 @@ body{
 font-family:Poppins,Arial;
 background:linear-gradient(120deg,#020617,#0f172a,#1e3a8a);
 color:white;
-scroll-behavior:smooth;
 }
 a,button{cursor:pointer}
-
-/* NAVBAR */
 header{
 background:#020617;
 border-bottom:2px solid gold;
@@ -27,54 +24,42 @@ display:flex;justify-content:space-between;align-items:center;
 padding:15px 30px;
 }
 nav h2{color:gold}
-nav a{color:white;margin:0 10px;text-decoration:none;font-weight:500}
+nav a{color:white;margin:0 10px;text-decoration:none}
 nav a:hover{color:gold}
 
-/* HERO */
-.hero{text-align:center;padding:90px 20px}
-.hero h1{font-size:42px;color:gold}
-.hero p{margin-top:10px}
-
-/* SECTIONS */
 section{padding:60px 20px}
 .hidden{display:none}
 h2{text-align:center;color:gold;margin-bottom:20px}
 
-/* COURSES */
+.hero{text-align:center;padding:90px 20px}
+.hero h1{font-size:42px;color:gold}
+
 .courses{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
 }
 .course{
-background:#0f172a;
-padding:20px;border-radius:12px;
-text-align:center;
-transition:.3s;
+background:#0f172a;padding:15px;border-radius:10px;text-align:center;
 }
-.course:hover{transform:translateY(-6px);box-shadow:0 0 15px gold}
 
-/* CARD */
 .card{
 background:white;color:black;
-max-width:480px;margin:20px auto;padding:25px;
-border-radius:12px;
-box-shadow:0 0 15px rgba(255,215,0,0.4);
+max-width:500px;margin:20px auto;padding:20px;
+border-radius:10px;
 }
 input,select,textarea{
 width:100%;padding:10px;margin:8px 0;
 border:1px solid #ccc;border-radius:5px;
 }
 button{
-padding:10px 20px;
-background:#2563eb;color:white;border:none;border-radius:6px;
+padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:5px;
 }
 button:hover{background:#1e40af}
 
 .listBox{
-background:#0f172a;
-padding:10px;margin:8px;border-radius:6px;
-color:white;
+background:#0f172a;color:white;
+padding:10px;margin:5px;border-radius:5px;
 }
 </style>
 </head>
@@ -83,7 +68,7 @@ color:white;
 <header>
 <nav>
 <h2>Disha Computer</h2>
-<div id="navLinks">
+<div>
 <a onclick="show('home')">Home</a>
 <a onclick="show('courses')">Courses</a>
 <a onclick="show('about')">About</a>
@@ -100,6 +85,9 @@ color:white;
 <h1>India’s Trusted Computer Education</h1>
 <p>Professional LMS • Online Exam • Certificates</p>
 </div>
+
+<h2>Extra Website Content</h2>
+<div id="frontContent" class="courses"></div>
 </section>
 
 <!-- COURSES -->
@@ -149,7 +137,7 @@ color:white;
 <!-- OTP -->
 <section id="otpSec" class="hidden">
 <div class="card">
-<h2>Exam OTP Verification</h2>
+<h2>OTP Verification</h2>
 <p>Your OTP: <b id="showOtp"></b></p>
 <input id="otpInput" placeholder="Enter OTP">
 <button onclick="verifyOtp()">Verify & Start Exam</button>
@@ -170,9 +158,11 @@ color:white;
 <section id="exam" class="hidden">
 <div class="card">
 <h2>Online Exam</h2>
-<p>Q: <span id="qtext"></span></p>
+<p id="qtext"></p>
+
 <select id="qans"></select>
-<button onclick="nextQuestion()">Next</button>
+
+<button onclick="nextQuestion()">Next Question</button>
 </div>
 </section>
 
@@ -186,23 +176,24 @@ color:white;
 </div>
 </section>
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 <section id="admin" class="hidden">
 <div class="card">
 <h2>Admin Panel</h2>
 
-<h3>Add Navbar Link</h3>
-<input id="navText" placeholder="Link Text">
-<input id="navTarget" placeholder="Target Section ID">
-<button onclick="addNav()">Add Nav Link</button>
-<div id="navList"></div>
+<h3>Add Front Website Box</h3>
+<input id="frontText" placeholder="Title Text">
+<button onclick="addFront()">Add Box</button>
+<div id="frontList"></div>
 
 <hr>
 
-<h3>Add Question</h3>
-<textarea id="aq"></textarea>
+<h3>Add Question (4 Options)</h3>
+<textarea id="aq" placeholder="Question"></textarea>
 <input id="ao1" placeholder="Option 1">
 <input id="ao2" placeholder="Option 2">
+<input id="ao3" placeholder="Option 3">
+<input id="ao4" placeholder="Option 4">
 <input id="ac" placeholder="Correct Option Text">
 <button onclick="addQuestion()">Add Question</button>
 
@@ -212,22 +203,21 @@ color:white;
 </section>
 
 <script>
-/* DATABASE */
 let users = JSON.parse(localStorage.getItem("users")) || [
 {id:"ADMIN001",name:"Admin",email:"admin@disha.com",pass:"admin123",role:"admin"}
 ];
 let questions = JSON.parse(localStorage.getItem("questions")) || [];
-let navCustom = JSON.parse(localStorage.getItem("navCustom")) || [];
+let frontBoxes = JSON.parse(localStorage.getItem("frontBoxes")) || [];
 
 let currentUser=null;
+let otpCode=0;
 let examIndex=0;
 let score=0;
-let otpCode=0;
 
-/* SHOW SECTION */
 function show(id){
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
+if(id==="home")loadFront();
 }
 
 /* REGISTER */
@@ -235,7 +225,7 @@ function register(){
 let id="DC"+Math.floor(1000+Math.random()*9000);
 users.push({id,name:rname.value,email:remail.value,pass:rpass.value,role:"student"});
 localStorage.setItem("users",JSON.stringify(users));
-alert("Registered! Your ID: "+id);
+alert("Registered! ID: "+id);
 show("login");
 }
 
@@ -249,21 +239,18 @@ sname.innerText=u.name;
 sid.innerText=u.id;
 }
 
-/* OTP START */
+/* OTP */
 function startOtp(){
 otpCode=Math.floor(1000+Math.random()*9000);
 show("otpSec");
 showOtp.innerText=otpCode;
 }
-
-/* VERIFY OTP */
 function verifyOtp(){
-if(otpInput.value==otpCode){
-startExam();
-}else alert("Wrong OTP");
+if(otpInput.value==otpCode){startExam();}
+else alert("Wrong OTP");
 }
 
-/* START EXAM */
+/* EXAM SYSTEM */
 function startExam(){
 if(questions.length==0){alert("No Questions Added");return;}
 examIndex=0; score=0;
@@ -271,32 +258,28 @@ show("exam");
 loadQuestion();
 }
 
-/* LOAD QUESTION */
 function loadQuestion(){
 let q=questions[examIndex];
-qtext.innerText=q.q;
+qtext.innerText=(examIndex+1)+". "+q.q;
 qans.innerHTML="";
-[q.o1,q.o2].forEach(o=>{
+[q.o1,q.o2,q.o3,q.o4].forEach(o=>{
 let op=document.createElement("option");
 op.text=o; qans.add(op);
 });
 }
 
-/* NEXT QUESTION */
 function nextQuestion(){
 if(qans.value===questions[examIndex].c) score++;
 examIndex++;
-if(examIndex>=questions.length){
-showResult();
-}else loadQuestion();
+if(examIndex>=questions.length){showResult();}
+else loadQuestion();
 }
 
-/* RESULT */
 function showResult(){
 show("result");
 rname.innerText=currentUser.name;
 rid.innerText=currentUser.id;
-rmarks.innerText=score + " / " + questions.length;
+rmarks.innerText=score+" / "+questions.length;
 }
 
 /* ADMIN LOGIN */
@@ -311,47 +294,64 @@ loadAdmin();
 
 /* ADMIN ADD QUESTION */
 function addQuestion(){
-questions.push({q:aq.value,o1:ao1.value,o2:ao2.value,c:ac.value});
+questions.push({
+q:aq.value,
+o1:ao1.value,
+o2:ao2.value,
+o3:ao3.value,
+o4:ao4.value,
+c:ac.value
+});
 localStorage.setItem("questions",JSON.stringify(questions));
 loadAdmin();
 }
 
-/* ADMIN NAVBAR MANAGER */
-function addNav(){
-navCustom.push({text:navText.value,target:navTarget.value});
-localStorage.setItem("navCustom",JSON.stringify(navCustom));
+/* DELETE QUESTION */
+function deleteQuestion(i){
+questions.splice(i,1);
+localStorage.setItem("questions",JSON.stringify(questions));
 loadAdmin();
-loadNavbar();
 }
 
-function loadNavbar(){
-navCustom.forEach(n=>{
-if(!document.getElementById("nav_"+n.text)){
-let a=document.createElement("a");
-a.innerText=n.text;
-a.onclick=()=>show(n.target);
-a.id="nav_"+n.text;
-navLinks.appendChild(a);
+/* FRONT WEBSITE BOX */
+function addFront(){
+frontBoxes.push(frontText.value);
+localStorage.setItem("frontBoxes",JSON.stringify(frontBoxes));
+loadAdmin();
+loadFront();
 }
+
+function deleteFront(i){
+frontBoxes.splice(i,1);
+localStorage.setItem("frontBoxes",JSON.stringify(frontBoxes));
+loadAdmin();
+loadFront();
+}
+
+function loadFront(){
+frontContent.innerHTML="";
+frontBoxes.forEach(b=>{
+frontContent.innerHTML+=`<div class='course'>${b}</div>`;
 });
 }
 
 /* LOAD ADMIN DATA */
 function loadAdmin(){
 questionList.innerHTML="";
-questions.forEach(q=>{
-questionList.innerHTML+=`<div class='listBox'>${q.q}</div>`;
+questions.forEach((q,i)=>{
+questionList.innerHTML+=`<div class='listBox'>${q.q}
+<button onclick="deleteQuestion(${i})">Delete</button></div>`;
 });
-navList.innerHTML="";
-navCustom.forEach(n=>{
-navList.innerHTML+=`<div class='listBox'>${n.text} → ${n.target}</div>`;
+frontList.innerHTML="";
+frontBoxes.forEach((f,i)=>{
+frontList.innerHTML+=`<div class='listBox'>${f}
+<button onclick="deleteFront(${i})">Delete</button></div>`;
 });
 }
 
-/* INIT */
-loadNavbar();
 show("home");
 </script>
 
 </body>
 </html>
+
