@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Disha Computer LMS</title>
+<title>Disha Computer Education LMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -12,31 +12,54 @@ body{
 font-family:Poppins,Arial;
 background:linear-gradient(120deg,#020617,#0f172a,#1e3a8a);
 color:white;
+scroll-behavior:smooth;
 }
 a,button{cursor:pointer}
+
+/* NAVBAR */
 header{
 background:#020617;
 border-bottom:2px solid gold;
-position:sticky;top:0;
+position:sticky;top:0;z-index:999;
 }
 nav{
 display:flex;justify-content:space-between;align-items:center;
 padding:15px 30px;
 }
 nav h2{color:gold}
-nav a{color:white;margin:0 10px;text-decoration:none}
+nav a{color:white;margin:0 10px;text-decoration:none;font-weight:500}
 nav a:hover{color:gold}
+
+/* HERO */
+.hero{text-align:center;padding:90px 20px}
+.hero h1{font-size:42px;color:gold}
+.hero p{margin-top:10px}
+
+/* SECTIONS */
 section{padding:60px 20px}
 .hidden{display:none}
 h2{text-align:center;color:gold;margin-bottom:20px}
 
-.hero{text-align:center;padding:80px 20px}
-.hero h1{font-size:40px;color:gold}
+/* COURSES */
+.courses{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+.course{
+background:#0f172a;
+padding:20px;border-radius:12px;
+text-align:center;
+transition:.3s;
+}
+.course:hover{transform:translateY(-6px);box-shadow:0 0 15px gold}
 
+/* CARD */
 .card{
 background:white;color:black;
-max-width:500px;margin:20px auto;padding:20px;
-border-radius:10px;
+max-width:480px;margin:20px auto;padding:25px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(255,215,0,0.4);
 }
 input,select,textarea{
 width:100%;padding:10px;margin:8px 0;
@@ -44,12 +67,14 @@ border:1px solid #ccc;border-radius:5px;
 }
 button{
 padding:10px 20px;
-background:#2563eb;color:white;border:none;border-radius:5px;
+background:#2563eb;color:white;border:none;border-radius:6px;
 }
 button:hover{background:#1e40af}
 
-.courseBox{
-background:#0f172a;padding:15px;margin:10px;border-radius:8px;
+.listBox{
+background:#0f172a;
+padding:10px;margin:8px;border-radius:6px;
+color:white;
 }
 </style>
 </head>
@@ -58,12 +83,13 @@ background:#0f172a;padding:15px;margin:10px;border-radius:8px;
 <header>
 <nav>
 <h2>Disha Computer</h2>
-<div>
+<div id="navLinks">
 <a onclick="show('home')">Home</a>
+<a onclick="show('courses')">Courses</a>
+<a onclick="show('about')">About</a>
 <a onclick="show('login')">Student Login</a>
 <a onclick="show('register')">Register</a>
 <a onclick="adminLogin()">Admin</a>
-<a onclick="logout()">Logout</a>
 </div>
 </nav>
 </header>
@@ -71,12 +97,31 @@ background:#0f172a;padding:15px;margin:10px;border-radius:8px;
 <!-- HOME -->
 <section id="home">
 <div class="hero">
-<h1>Welcome to Disha Computer Education</h1>
-<p>Professional Computer Institute LMS</p>
+<h1>India’s Trusted Computer Education</h1>
+<p>Professional LMS • Online Exam • Certificates</p>
 </div>
+</section>
 
-<h2>Home Page Topics (Added by Admin)</h2>
-<div id="homeTopics"></div>
+<!-- COURSES -->
+<section id="courses">
+<h2>Our Courses</h2>
+<div class="courses">
+<div class="course">💻 ADCA</div>
+<div class="course">📘 CCC</div>
+<div class="course">🎓 O-Level</div>
+<div class="course">📊 Tally Prime</div>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+<h2>Why Choose Us</h2>
+<div class="courses">
+<div class="course">100% Practical</div>
+<div class="course">Online Exam</div>
+<div class="course">Certificate</div>
+<div class="course">Job Oriented</div>
+</div>
 </section>
 
 <!-- REGISTER -->
@@ -101,13 +146,23 @@ background:#0f172a;padding:15px;margin:10px;border-radius:8px;
 </div>
 </section>
 
+<!-- OTP -->
+<section id="otpSec" class="hidden">
+<div class="card">
+<h2>Exam OTP Verification</h2>
+<p>Your OTP: <b id="showOtp"></b></p>
+<input id="otpInput" placeholder="Enter OTP">
+<button onclick="verifyOtp()">Verify & Start Exam</button>
+</div>
+</section>
+
 <!-- STUDENT DASH -->
 <section id="student" class="hidden">
 <div class="card">
 <h2>Student Dashboard</h2>
 <p>Name: <b id="sname"></b></p>
 <p>ID: <b id="sid"></b></p>
-<button onclick="startExam()">Start Exam</button>
+<button onclick="startOtp()">Start Exam</button>
 </div>
 </section>
 
@@ -115,16 +170,16 @@ background:#0f172a;padding:15px;margin:10px;border-radius:8px;
 <section id="exam" class="hidden">
 <div class="card">
 <h2>Online Exam</h2>
-<p id="examQ"></p>
-<select id="examAns"></select>
-<button onclick="submitExam()">Submit</button>
+<p>Q: <span id="qtext"></span></p>
+<select id="qans"></select>
+<button onclick="nextQuestion()">Next</button>
 </div>
 </section>
 
 <!-- RESULT -->
 <section id="result" class="hidden">
 <div class="card">
-<h2>Your Result</h2>
+<h2>Result</h2>
 <p>Name: <b id="rname"></b></p>
 <p>ID: <b id="rid"></b></p>
 <p>Marks: <b id="rmarks"></b></p>
@@ -136,53 +191,46 @@ background:#0f172a;padding:15px;margin:10px;border-radius:8px;
 <div class="card">
 <h2>Admin Panel</h2>
 
-<h3>Add Home Page Topic</h3>
-<textarea id="newTopic" placeholder="Write topic / photo link text"></textarea>
-<button onclick="addTopic()">Add Topic</button>
-
-<h3>Home Topics List</h3>
-<div id="topicList"></div>
+<h3>Add Navbar Link</h3>
+<input id="navText" placeholder="Link Text">
+<input id="navTarget" placeholder="Target Section ID">
+<button onclick="addNav()">Add Nav Link</button>
+<div id="navList"></div>
 
 <hr>
 
-<h3>Add Exam Question</h3>
-<input id="qtext" placeholder="Question">
-<input id="qopt1" placeholder="Option 1">
-<input id="qopt2" placeholder="Option 2">
-<input id="qcorrect" placeholder="Correct Option Text">
+<h3>Add Question</h3>
+<textarea id="aq"></textarea>
+<input id="ao1" placeholder="Option 1">
+<input id="ao2" placeholder="Option 2">
+<input id="ac" placeholder="Correct Option Text">
 <button onclick="addQuestion()">Add Question</button>
 
 <h3>Question Bank</h3>
 <div id="questionList"></div>
-
-<hr>
-
-<h3>Student Results</h3>
-<div id="resultList"></div>
-
 </div>
 </section>
 
 <script>
-// DATABASE
+/* DATABASE */
 let users = JSON.parse(localStorage.getItem("users")) || [
 {id:"ADMIN001",name:"Admin",email:"admin@disha.com",pass:"admin123",role:"admin"}
 ];
 let questions = JSON.parse(localStorage.getItem("questions")) || [];
-let results = JSON.parse(localStorage.getItem("results")) || [];
-let topics = JSON.parse(localStorage.getItem("topics")) || [];
+let navCustom = JSON.parse(localStorage.getItem("navCustom")) || [];
 
 let currentUser=null;
-let currentQuestion=null;
+let examIndex=0;
+let score=0;
+let otpCode=0;
 
-// SHOW SECTION
+/* SHOW SECTION */
 function show(id){
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
-if(id==="home")loadTopics();
 }
 
-// REGISTER
+/* REGISTER */
 function register(){
 let id="DC"+Math.floor(1000+Math.random()*9000);
 users.push({id,name:rname.value,email:remail.value,pass:rpass.value,role:"student"});
@@ -191,7 +239,7 @@ alert("Registered! Your ID: "+id);
 show("login");
 }
 
-// LOGIN
+/* LOGIN */
 function login(){
 let u=users.find(x=>x.email===lemail.value && x.pass===lpass.value);
 if(!u){msg.innerText="Invalid Login";return;}
@@ -201,118 +249,109 @@ sname.innerText=u.name;
 sid.innerText=u.id;
 }
 
-// ADMIN LOGIN
+/* OTP START */
+function startOtp(){
+otpCode=Math.floor(1000+Math.random()*9000);
+show("otpSec");
+showOtp.innerText=otpCode;
+}
+
+/* VERIFY OTP */
+function verifyOtp(){
+if(otpInput.value==otpCode){
+startExam();
+}else alert("Wrong OTP");
+}
+
+/* START EXAM */
+function startExam(){
+if(questions.length==0){alert("No Questions Added");return;}
+examIndex=0; score=0;
+show("exam");
+loadQuestion();
+}
+
+/* LOAD QUESTION */
+function loadQuestion(){
+let q=questions[examIndex];
+qtext.innerText=q.q;
+qans.innerHTML="";
+[q.o1,q.o2].forEach(o=>{
+let op=document.createElement("option");
+op.text=o; qans.add(op);
+});
+}
+
+/* NEXT QUESTION */
+function nextQuestion(){
+if(qans.value===questions[examIndex].c) score++;
+examIndex++;
+if(examIndex>=questions.length){
+showResult();
+}else loadQuestion();
+}
+
+/* RESULT */
+function showResult(){
+show("result");
+rname.innerText=currentUser.name;
+rid.innerText=currentUser.id;
+rmarks.innerText=score + " / " + questions.length;
+}
+
+/* ADMIN LOGIN */
 function adminLogin(){
 let e=prompt("Admin Email");
 let p=prompt("Admin Password");
 let u=users.find(x=>x.email===e && x.pass===p && x.role==="admin");
 if(!u){alert("Wrong Admin Login");return;}
-currentUser=u;
 show("admin");
-loadAdminData();
+loadAdmin();
 }
 
-// START EXAM
-function startExam(){
-if(questions.length==0){alert("No Questions Added Yet");return;}
-currentQuestion=questions[Math.floor(Math.random()*questions.length)];
-show("exam");
-examQ.innerText=currentQuestion.q;
-examAns.innerHTML="";
-[currentQuestion.o1,currentQuestion.o2].forEach(o=>{
-let op=document.createElement("option");
-op.text=o; examAns.add(op);
-});
-}
-
-// SUBMIT EXAM
-function submitExam(){
-let score = (examAns.value===currentQuestion.correct)?1:0;
-results.push({name:currentUser.name,id:currentUser.id,marks:score});
-localStorage.setItem("results",JSON.stringify(results));
-show("result");
-rname.innerText=currentUser.name;
-rid.innerText=currentUser.id;
-rmarks.innerText=score;
-}
-
-// ADMIN FUNCTIONS
+/* ADMIN ADD QUESTION */
 function addQuestion(){
-questions.push({
-q:qtext.value,
-o1:qopt1.value,
-o2:qopt2.value,
-correct:qcorrect.value
+questions.push({q:aq.value,o1:ao1.value,o2:ao2.value,c:ac.value});
+localStorage.setItem("questions",JSON.stringify(questions));
+loadAdmin();
+}
+
+/* ADMIN NAVBAR MANAGER */
+function addNav(){
+navCustom.push({text:navText.value,target:navTarget.value});
+localStorage.setItem("navCustom",JSON.stringify(navCustom));
+loadAdmin();
+loadNavbar();
+}
+
+function loadNavbar(){
+navCustom.forEach(n=>{
+if(!document.getElementById("nav_"+n.text)){
+let a=document.createElement("a");
+a.innerText=n.text;
+a.onclick=()=>show(n.target);
+a.id="nav_"+n.text;
+navLinks.appendChild(a);
+}
 });
-localStorage.setItem("questions",JSON.stringify(questions));
-loadAdminData();
 }
 
-function deleteQuestion(i){
-questions.splice(i,1);
-localStorage.setItem("questions",JSON.stringify(questions));
-loadAdminData();
-}
-
-function loadAdminData(){
+/* LOAD ADMIN DATA */
+function loadAdmin(){
 questionList.innerHTML="";
-questions.forEach((q,i)=>{
-questionList.innerHTML+=`<div class='courseBox'>${q.q}
-<button onclick="deleteQuestion(${i})">Delete</button></div>`;
+questions.forEach(q=>{
+questionList.innerHTML+=`<div class='listBox'>${q.q}</div>`;
 });
-
-resultList.innerHTML="";
-results.forEach((r,i)=>{
-resultList.innerHTML+=`<div class='courseBox'>${r.name} (${r.id}) = ${r.marks}
-<button onclick="deleteResult(${i})">Delete</button></div>`;
-});
-
-topicList.innerHTML="";
-topics.forEach((t,i)=>{
-topicList.innerHTML+=`<div class='courseBox'>${t}
-<button onclick="deleteTopic(${i})">Delete</button></div>`;
+navList.innerHTML="";
+navCustom.forEach(n=>{
+navList.innerHTML+=`<div class='listBox'>${n.text} → ${n.target}</div>`;
 });
 }
 
-// DELETE RESULT
-function deleteResult(i){
-results.splice(i,1);
-localStorage.setItem("results",JSON.stringify(results));
-loadAdminData();
-}
-
-// HOME TOPIC
-function addTopic(){
-topics.push(newTopic.value);
-localStorage.setItem("topics",JSON.stringify(topics));
-loadAdminData();
-loadTopics();
-}
-
-function deleteTopic(i){
-topics.splice(i,1);
-localStorage.setItem("topics",JSON.stringify(topics));
-loadAdminData();
-loadTopics();
-}
-
-function loadTopics(){
-homeTopics.innerHTML="";
-topics.forEach(t=>{
-homeTopics.innerHTML+=`<div class='courseBox'>${t}</div>`;
-});
-}
-
-// LOGOUT
-function logout(){
-currentUser=null;
-show("home");
-}
-
-// DEFAULT
+/* INIT */
+loadNavbar();
 show("home");
 </script>
 
 </body>
 </html>
-
