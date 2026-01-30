@@ -1,194 +1,320 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Disha Computer Education LMS</title>
+<title>Disha Computer Education | GOD MODE LMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: linear-gradient(120deg,#020024,#090979,#020024);
-  color:#fff;
+margin:0;font-family:Poppins,Arial;color:white;
+background:linear-gradient(-45deg,#020617,#1e3a8a,#2563eb,#020617);
+background-size:400% 400%;
+animation:bg 12s ease infinite;
 }
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 30px;
-  background:#000;
-  border-bottom:3px solid gold;
+@keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+header{padding:20px;text-align:center;border-bottom:3px solid gold}
+nav a{color:gold;margin:10px;font-weight:bold;cursor:pointer;text-decoration:none}
+
+section{padding:40px;text-align:center}
+.hidden{display:none}
+
+.hero{
+padding:80px 20px;
 }
-header h1{color:gold;}
-nav a{
-  color:#fff;
-  margin:0 10px;
-  text-decoration:none;
-  font-weight:bold;
+.hero h1{font-size:42px}
+.hero p{font-size:18px;opacity:.9}
+
+.cards{
+display:flex;flex-wrap:wrap;justify-content:center;gap:20px
 }
-section{padding:40px;}
 .card{
-  background:#fff;
-  color:#000;
-  max-width:400px;
-  margin:auto;
-  padding:25px;
-  border-radius:10px;
+background:white;color:black;padding:25px;width:300px;
+border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.3)
 }
-input,button,textarea{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-}
+
 button{
-  background:#2563eb;
-  color:#fff;
-  border:none;
-  cursor:pointer;
-  border-radius:5px;
+padding:10px 22px;background:#2563eb;color:white;
+border:none;border-radius:8px;cursor:pointer
 }
-.notice{
-  background:gold;
-  color:#000;
-  padding:15px;
-  margin:15px auto;
-  max-width:700px;
-  border-radius:8px;
+button:hover{background:#1e40af}
+
+input,select{width:90%;padding:10px;margin:6px}
+
+.timer{color:red;font-size:18px;font-weight:bold}
+
+footer{
+padding:20px;border-top:3px solid gold;text-align:center;margin-top:40px
 }
-.hidden{display:none;}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Disha Computer</h1>
+<h1>👑 Disha Computer Education</h1>
 <nav>
-<a href="#" onclick="show('home')">Home</a>
-<a href="#" onclick="show('register')">Register</a>
-<a href="#" onclick="show('login')">Student Login</a>
-<a href="#" onclick="show('admin')">Admin</a>
-<a href="#" onclick="logout()">Logout</a>
+<a onclick="show('home')">Home</a>
+<a onclick="show('courses')">Courses</a>
+<a onclick="show('register')">Register</a>
+<a onclick="show('login')">Login</a>
+<a onclick="dashboard()">Dashboard</a>
+<a onclick="startExam()">Start Exam</a>
+<a onclick="show('verify')">Verify</a>
 </nav>
 </header>
 
 <!-- HOME -->
 <section id="home">
-<h2 style="text-align:center">Welcome to Disha Computer Education</h2>
-<div id="noticeArea"></div>
+<div class="hero">
+<h1>India’s Trusted Computer Education Institute</h1>
+<p>Online Exams • Certificates • Franchise System • Ranking • GOD MODE LMS</p>
+<button onclick="show('register')">Join Now</button>
+<button onclick="show('courses')">View Courses</button>
+</div>
+
+<div class="cards">
+<div class="card">
+<h3>🎓 Certified Courses</h3>
+<p>Government + Job Oriented Professional Courses</p>
+</div>
+<div class="card">
+<h3>📝 Online Exam</h3>
+<p>Timer Based MCQ Exams with Ranking</p>
+</div>
+<div class="card">
+<h3>📜 Digital Certificate</h3>
+<p>Auto Generated & Verifiable Certificates</p>
+</div>
+</div>
+</section>
+
+<!-- COURSES -->
+<section id="courses" class="hidden">
+<h2>Our Popular Courses</h2>
+<div class="cards">
+<div class="card">
+<h3>CCC</h3>
+<p>Computer Concepts, MS Office, Internet</p>
+</div>
+<div class="card">
+<h3>O Level</h3>
+<p>IT Tools, Web Design, Python</p>
+</div>
+<div class="card">
+<h3>ADCA</h3>
+<p>Accounting, Tally, GST</p>
+</div>
+<div class="card">
+<h3>Tally Prime</h3>
+<p>Accounting + GST Practical Training</p>
+</div>
+</div>
 </section>
 
 <!-- REGISTER -->
 <section id="register" class="hidden">
-<div class="card">
 <h2>Student Registration</h2>
-<input id="rname" placeholder="Full Name">
-<input id="remail" placeholder="Email">
-<input id="rpass" type="password" placeholder="Password">
+<div class="card">
+<input id="rEmail" placeholder="Email">
+<input id="rPass" type="password" placeholder="Password">
+<select id="rBranch">
+<option>Main Branch</option>
+<option>City Center</option>
+<option>Rural Branch</option>
+</select>
 <button onclick="register()">Register</button>
 </div>
 </section>
 
 <!-- LOGIN -->
 <section id="login" class="hidden">
+<h2>Login</h2> 
 <div class="card">
-<h2>Student Login</h2>
-<input id="lemail" placeholder="Email">
-<input id="lpass" type="password" placeholder="Password">
+<input id="email" placeholder="Email">
+<input id="pass" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
+<p id="msg"></p>
 </div>
 </section>
 
-<!-- ADMIN -->
-<section id="admin" class="hidden">
+<!-- DASHBOARD -->
+<section id="dash" class="hidden">
+<h2>Dashboard</h2>
+<p id="roleTxt"></p>
+
+<div class="card" id="adminPanel">
+<h3>👑 Admin Panel</h3>
+<p>Total Students: <b id="st"></b></p>
+
+<h4>Add MCQ</h4>
+<input id="qtxt" placeholder="Question">
+<input id="o1" placeholder="Option A">
+<input id="o2" placeholder="Option B">
+<input id="o3" placeholder="Option C">
+<input id="o4" placeholder="Option D">
+<select id="ans">
+<option value="0">A Correct</option>
+<option value="1">B Correct</option>
+<option value="2">C Correct</option>
+<option value="3">D Correct</option>
+</select>
+<button onclick="addQ()">Add Question</button>
+<div id="qlist"></div>
+</div>
+
+<div class="card" id="studentPanel">
+<h3>Student Panel</h3>
+<div id="result"></div>
+<button onclick="printCert()">Print Certificate</button>
+</div>
+
+<button onclick="logout()">Logout</button>
+</section>
+
+<!-- EXAM -->
+<section id="exam" class="hidden">
+<h2>Online Exam</h2>
+<p class="timer">Time: <span id="t">15</span>s</p>
+<h3 id="q"></h3>
+<div id="opts"></div>
+</section>
+
+<!-- VERIFY -->
+<section id="verify" class="hidden">
 <div class="card">
-<h2>Admin Panel</h2>
-<textarea id="noticeText" placeholder="Write notice"></textarea>
-<button onclick="addNotice()">Publish Notice</button>
-<hr>
-<textarea id="questionText" placeholder="Add Question"></textarea>
-<button onclick="addQuestion()">Add Question</button>
+<h2>Certificate Verification</h2>
+<input id="vid" placeholder="Certificate ID">
+<button onclick="verify()">Verify</button>
+<p id="vmsg"></p>
 </div>
 </section>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getDatabase,ref,set,push,onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+<footer>
+© 2026 Disha Computer Education | GOD MODE LMS
+</footer>
 
-const firebaseConfig = {
- apiKey: "AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
- authDomain: "disha-computer-education.firebaseapp.com",
- databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com",
- projectId: "disha-computer-education",
- storageBucket: "disha-computer-education.appspot.com",
- messagingSenderId: "461970211371",
- appId: "1:461970211371:web:50cf15eae93b63e267a06e"
-};
+<script>
+// ===== USERS =====
+let users = JSON.parse(localStorage.users || "[]");
+if(!users.find(u=>u.email==="admin@disha.com")){
+users.push({email:"admin@disha.com",pass:"admin123",role:"admin"});
+localStorage.users = JSON.stringify(users);
+}
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+// ===== QUESTIONS =====
+let questions = JSON.parse(localStorage.questions || "[]");
+if(questions.length===0){
+questions.push({
+q:"CPU full form?",
+o:["Central Processing Unit","Control Program Unit","Core Unit","None"],
+a:0
+});
+localStorage.questions=JSON.stringify(questions);
+}
 
-/* UI */
-window.show=(id)=>{
+// ===== NAV =====
+function show(id){
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 
-/* REGISTER */
-window.register=()=>{
-const n=rname.value,e=remail.value,p=rpass.value;
-createUserWithEmailAndPassword(auth,e,p).then(u=>{
- set(ref(db,'students/'+u.user.uid),{name:n,email:e});
- alert("Registered Successfully");
- show('login');
-}).catch(err=>alert(err.message));
+// ===== REGISTER =====
+function register(){
+users.push({email:rEmail.value,pass:rPass.value,branch:rBranch.value,role:"student"});
+localStorage.users=JSON.stringify(users);
+alert("Registration Successful. Now Login.");
+show("login");
 }
 
-/* LOGIN */
-window.login=()=>{
-signInWithEmailAndPassword(auth,lemail.value,lpass.value)
-.then(res=>{
- alert("Login Success");
- if(res.user.email==="admin@disha.com") show('admin');
- else show('home');
-})
-.catch(e=>alert(e.message));
+// ===== LOGIN (FIXED) =====
+function login(){
+let u=users.find(x=>x.email===email.value && x.pass===pass.value);
+if(!u){msg.innerText="Invalid Login";return;}
+localStorage.user=u.email;
+localStorage.role=u.role;
+localStorage.branch=u.branch||"Main Branch";
+dashboard();
 }
 
-/* LOGOUT */
-window.logout=()=>{
-signOut(auth);
-show('home');
+// ===== DASHBOARD =====
+function dashboard(){
+let r=localStorage.role;
+if(!r){show("login");return;}
+show("dash");
+roleTxt.innerText="Logged in as: "+r;
+adminPanel.style.display=r==="admin"?"block":"none";
+studentPanel.style.display=r==="student"?"block":"none";
+st.innerText=users.filter(u=>u.role==="student").length;
+renderQ();
 }
 
-/* NOTICE */
-window.addNotice=()=>{
-push(ref(db,'notices'),{
- text:noticeText.value,
- time:new Date().toLocaleString()
-});
-alert("Notice Published");
-noticeText.value="";
+// ===== LOGOUT =====
+function logout(){
+localStorage.removeItem("user");
+localStorage.removeItem("role");
+show("home");
 }
 
-onValue(ref(db,'notices'),snap=>{
-noticeArea.innerHTML="";
-snap.forEach(n=>{
- noticeArea.innerHTML+=`<div class="notice">${n.val().text}<br><small>${n.val().time}</small></div>`;
+// ===== ADMIN MCQ =====
+function addQ(){
+if(localStorage.role!=="admin"){alert("Admin only");return;}
+questions.push({
+q:qtxt.value,
+o:[o1.value,o2.value,o3.value,o4.value],
+a:Number(ans.value)
 });
+localStorage.questions=JSON.stringify(questions);
+renderQ();
+}
+function renderQ(){
+qlist.innerHTML="";
+questions.forEach((x,i)=>{
+qlist.innerHTML+=`${x.q}
+<button onclick="questions.splice(${i},1);localStorage.questions=JSON.stringify(questions);renderQ()">❌</button><br>`;
 });
+}
 
-/* QUESTIONS */
-window.addQuestion=()=>{
-push(ref(db,'questions'),{
- q:questionText.value,
- time:new Date().toLocaleString()
+// ===== EXAM =====
+let exam=[],i=0,score=0,time=15,timer;
+function startExam(){
+if(localStorage.role!=="student"){alert("Student login required");return;}
+exam=[...questions].sort(()=>0.5-Math.random()).slice(0,10);
+i=0;score=0;
+show("exam");next();
+}
+function next(){
+if(i>=exam.length){finish();return;}
+time=15;t.innerText=time;
+q.innerText=exam[i].q;
+opts.innerHTML="";
+exam[i].o.forEach((x,idx)=>{
+opts.innerHTML+=`<button onclick="ans(${idx})">${x}</button><br><br>`;
 });
-alert("Question Added");
-questionText.value="";
+timer=setInterval(()=>{
+time--;t.innerText=time;
+if(time<=0){clearInterval(timer);i++;next();}
+},1000);
+}
+function ans(a){
+clearInterval(timer);
+if(a===exam[i].a)score++; else score-=0.25;
+i++;next();
+}
+function finish(){
+show("dash");
+let pass=score>=5;
+result.innerHTML=`Score: ${score}<br>Status: ${pass?"PASS":"FAIL"}`;
+if(pass){
+let cid="CERT"+Date.now();
+localStorage.cert=cid;
+}
+}
+
+// ===== CERT VERIFY =====
+function verify(){
+vmsg.innerText=vid.value===localStorage.cert?"✅ Valid Certificate":"❌ Invalid";
 }
 </script>
 
