@@ -4,84 +4,84 @@
 <meta charset="UTF-8">
 <title>Disha Computer Education LMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  font-family: Arial;
-  background: linear-gradient(120deg,#020024,#090979,#020024);
-  color:#fff;
-}
-header{
-  display:flex;
-  justify-content:space-between;
-  padding:15px 30px;
-  background:#000;
-  border-bottom:3px solid gold;
-}
-header h1{color:gold;}
-nav a{
-  color:#fff;
-  margin:0 10px;
-  text-decoration:none;
-}
-section{padding:40px;}
-.card{
-  background:#fff;
-  color:#000;
-  max-width:420px;
-  margin:auto;
-  padding:25px;
-  border-radius:10px;
-}
-input,button,textarea{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-}
-button{
-  background:#2563eb;
-  color:#fff;
-  border:none;
-  cursor:pointer;
-}
-.notice{
-  background:gold;
-  color:#000;
-  padding:12px;
-  margin:10px auto;
-  max-width:700px;
-  border-radius:8px;
-}
-.hidden{display:none;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Poppins;background:linear-gradient(120deg,#020617,#0f172a,#1e3a8a);color:white}
+header{background:#020617;border-bottom:2px solid gold;position:sticky;top:0}
+nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
+nav h2{color:gold}
+nav a{color:white;margin:0 10px;cursor:pointer;text-decoration:none}
+nav a:hover{color:gold}
+section{padding:60px 20px}
+.hidden{display:none}
+h2{text-align:center;color:gold;margin-bottom:20px}
+.hero{text-align:center;padding:90px 20px}
+.hero h1{font-size:42px;color:gold}
+.courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.course{background:#0f172a;padding:15px;border-radius:10px;text-align:center}
+.card{background:white;color:black;max-width:520px;margin:20px auto;padding:20px;border-radius:10px}
+input,textarea{width:100%;padding:10px;margin:8px 0;border-radius:5px;border:1px solid #ccc}
+button{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:5px;cursor:pointer}
+button:hover{background:#1e40af}
+.listBox{background:#0f172a;color:white;padding:10px;margin:8px;border-radius:5px}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Disha Computer</h1>
 <nav>
-<a href="#" onclick="show('home')">Home</a>
-<a href="#" onclick="show('register')">Register</a>
-<a href="#" onclick="show('login')">Login</a>
-<a href="#" onclick="show('admin')">Admin</a>
-<a href="#" onclick="logout()">Logout</a>
+<h2>Disha Computer</h2>
+<div>
+<a onclick="show('home')">Home</a>
+<a onclick="show('courses')">Courses</a>
+<a onclick="show('about')">About</a>
+<a onclick="show('login')">Student Login</a>
+<a onclick="show('register')">Register</a>
+<a onclick="adminLogin()">Admin</a>
+<a onclick="logout()">Logout</a>
+</div>
 </nav>
 </header>
 
 <section id="home">
-<h2 align="center">Welcome to Disha Computer Education</h2>
-<div id="noticeArea"></div>
+<div class="hero">
+<h1>India’s Trusted Computer Education</h1>
+<p>Online Exam • Certificate • LMS</p>
+</div>
+<h2>Highlights</h2>
+<div id="frontContent" class="courses"></div>
+</section>
+
+<section id="courses" class="hidden">
+<h2>Our Courses</h2>
+<div class="courses">
+<div class="course">ADCA</div>
+<div class="course">CCC</div>
+<div class="course">O-Level</div>
+<div class="course">Tally Prime</div>
+</div>
+</section>
+
+<section id="about" class="hidden">
+<h2>Why Choose Us</h2>
+<div class="courses">
+<div class="course">100% Practical</div>
+<div class="course">Online Exam</div>
+<div class="course">Certificate</div>
+<div class="course">Job Oriented</div>
+</div>
 </section>
 
 <section id="register" class="hidden">
 <div class="card">
 <h2>Student Registration</h2>
-<input id="rname" placeholder="Full Name">
+<input id="rname" placeholder="Name">
 <input id="remail" placeholder="Email">
 <input id="rpass" type="password" placeholder="Password">
-<button id="registerBtn">Register</button>
+<button onclick="register()">Register</button>
 </div>
 </section>
 
@@ -90,102 +90,179 @@ button{
 <h2>Student Login</h2>
 <input id="lemail" placeholder="Email">
 <input id="lpass" type="password" placeholder="Password">
-<button id="loginBtn">Login</button>
+<p id="msg"></p>
+<button onclick="login()">Login</button>
+</div>
+</section>
+
+<section id="otpSec" class="hidden">
+<div class="card">
+<h2>OTP Verification</h2>
+<p>Your OTP: <b id="showOtp"></b></p>
+<input id="otpInput" placeholder="Enter OTP">
+<button onclick="verifyOtp()">Start Exam</button>
+</div>
+</section>
+
+<section id="student" class="hidden">
+<div class="card">
+<h2>Student Dashboard</h2>
+<p>Name: <b id="sname"></b></p>
+<p>ID: <b id="sid"></b></p>
+<button onclick="startOtp()">Start Exam</button>
+</div>
+</section>
+
+<section id="exam" class="hidden">
+<div class="card">
+<h2>Online Exam</h2>
+<p>Time: <b id="timer">60:00</b></p>
+<p id="qtext"></p>
+<div id="options"></div>
+<button onclick="nextQuestion()">Next</button>
+</div>
+</section>
+
+<section id="result" class="hidden">
+<div class="card">
+<h2>Result</h2>
+<p>Name: <b id="rname"></b></p>
+<p>ID: <b id="rid"></b></p>
+<p id="rmarks"></p>
 </div>
 </section>
 
 <section id="admin" class="hidden">
 <div class="card">
 <h2>Admin Panel</h2>
-<textarea id="noticeText" placeholder="Write Notice"></textarea>
-<button id="noticeBtn">Publish Notice</button>
-<hr>
-<textarea id="historyText" placeholder="Student History / Result"></textarea>
-<button id="historyBtn">Save History</button>
+
+<textarea id="aq" placeholder="Question"></textarea>
+<input id="ao1" placeholder="Option 1">
+<input id="ao2" placeholder="Option 2">
+<input id="ao3" placeholder="Option 3">
+<input id="ao4" placeholder="Option 4">
+<input id="ac" placeholder="Correct Option">
+<button onclick="addQuestion()">Save Question</button>
+
+<h3>Question Bank</h3>
+<div id="questionList"></div>
 </div>
 </section>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getDatabase,ref,set,push,onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+import { getDatabase, ref, push, set, onValue, remove } 
+from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const firebaseConfig = {
- apiKey: "AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
- authDomain: "disha-computer-education.firebaseapp.com",
- databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com",
- projectId: "disha-computer-education",
- storageBucket: "disha-computer-education.appspot.com",
- messagingSenderId: "461970211371",
- appId: "1:461970211371:web:50cf15eae93b63e267a06e"
+apiKey: "AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
+authDomain: "disha-computer-education.firebaseapp.com",
+databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com",
+projectId: "disha-computer-education",
+storageBucket: "disha-computer-education.firebasestorage.app",
+messagingSenderId: "461970211371",
+appId: "1:461970211371:web:50cf15eae93b63e267a06e"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getDatabase(app);
 
-/* UI */
+let questions=[], examIndex=0, correct=0, wrong=0, otp=0, timerInt;
+let users=[{email:"admin@disha.com",pass:"admin123",role:"admin"}];
+let currentUser=null, editId=null;
+
 window.show=id=>{
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
-};
+}
 
-/* REGISTER */
-registerBtn.onclick=()=>{
-createUserWithEmailAndPassword(auth,remail.value,rpass.value)
-.then(res=>{
- set(ref(db,"students/"+res.user.uid),{
-  name:rname.value,
-  email:remail.value
- });
- alert("Registration Successful");
- show("login");
-}).catch(e=>alert(e.message));
-};
+window.login=()=>{
+currentUser=users.find(x=>x.email===lemail.value&&x.pass===lpass.value);
+currentUser?show("student"):msg.innerText="Invalid";
+}
 
-/* LOGIN */
-loginBtn.onclick=()=>{
-signInWithEmailAndPassword(auth,lemail.value,lpass.value)
-.then(res=>{
- alert("Login Success");
- if(res.user.email==="admin@disha.com") show("admin");
- else show("home");
-}).catch(e=>alert(e.message));
-};
+window.adminLogin=()=>{
+let e=prompt("Admin Email"),p=prompt("Password");
+let u=users.find(x=>x.email===e&&x.pass===p);
+if(!u){alert("Wrong");return;}
+show("admin");
+}
 
-/* LOGOUT */
-window.logout=()=>{
-signOut(auth);
+window.startOtp=()=>{
+otp=Math.floor(1000+Math.random()*9000);
+show("otpSec"); showOtp.innerText=otp;
+}
+
+window.verifyOtp=()=>{
+if(otpInput.value==otp){show("exam"); startExam();}
+}
+
+function startExam(){
+examIndex=0; correct=0; wrong=0;
+startTimer(); loadQuestion();
+}
+
+function startTimer(){
+let t=3600;
+timerInt=setInterval(()=>{
+let m=Math.floor(t/60), s=t%60;
+timer.innerText=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+if(--t<0){clearInterval(timerInt); showResult();}
+},1000);
+}
+
+function loadQuestion(){
+let q=questions[examIndex];
+qtext.innerText=(examIndex+1)+". "+q.q;
+options.innerHTML="";
+[q.o1,q.o2,q.o3,q.o4].forEach(o=>{
+options.innerHTML+=`<label><input type="radio" name="ans" value="${o}"> ${o}</label><br>`;
+});
+}
+
+window.nextQuestion=()=>{
+let sel=document.querySelector('input[name=ans]:checked');
+sel && (sel.value===questions[examIndex].c?correct++:wrong++);
+++examIndex>=questions.length?showResult():loadQuestion();
+}
+
+function showResult(){
+clearInterval(timerInt);
+show("result");
+rmarks.innerHTML=`Total: ${questions.length}<br>Correct: ${correct}<br>Wrong: ${wrong}<br>Marks: ${correct}/${questions.length}`;
+}
+
+window.addQuestion=()=>{
+let data={q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:ac.value};
+editId?set(ref(db,"questions/"+editId),data):push(ref(db,"questions"),data);
+editId=null; alert("Saved");
+}
+
+onValue(ref(db,"questions"),snap=>{
+questions=[]; questionList.innerHTML="";
+snap.forEach(c=>{
+let q=c.val(); q.id=c.key; questions.push(q);
+questionList.innerHTML+=`
+<div class='listBox'>
+${q.q}
+<br>
+<button onclick="editQ('${q.id}')">Edit</button>
+<button onclick="delQ('${q.id}')">Delete</button>
+</div>`;
+});
+});
+
+window.editQ=id=>{
+let q=questions.find(x=>x.id===id);
+aq.value=q.q; ao1.value=q.o1; ao2.value=q.o2; ao3.value=q.o3; ao4.value=q.o4; ac.value=q.c;
+editId=id;
+}
+
+window.delQ=id=>{
+confirm("Delete?") && remove(ref(db,"questions/"+id));
+}
+
 show("home");
-};
-
-/* NOTICE */
-noticeBtn.onclick=()=>{
-push(ref(db,"notices"),{
- text:noticeText.value,
- time:new Date().toLocaleString()
-});
-noticeText.value="";
-alert("Notice Published");
-};
-
-onValue(ref(db,"notices"),snap=>{
-noticeArea.innerHTML="";
-snap.forEach(n=>{
- noticeArea.innerHTML+=`<div class="notice">${n.val().text}<br><small>${n.val().time}</small></div>`;
-});
-});
-
-/* STUDENT HISTORY */
-historyBtn.onclick=()=>{
-push(ref(db,"examHistory"),{
- data:historyText.value,
- time:new Date().toLocaleString()
-});
-historyText.value="";
-alert("History Saved");
-};
 </script>
-
 </body>
 </html>
