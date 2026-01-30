@@ -26,6 +26,7 @@ input,textarea{width:100%;padding:10px;margin:8px 0;border-radius:5px;border:1px
 button{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:5px;cursor:pointer}
 button:hover{background:#1e40af}
 .listBox{background:#0f172a;color:white;padding:10px;margin:8px;border-radius:5px}
+.notice{background:#fde047;color:black;padding:10px;border-radius:6px;margin:8px}
 </style>
 </head>
 
@@ -46,15 +47,18 @@ button:hover{background:#1e40af}
 </nav>
 </header>
 
+<!-- HOME -->
 <section id="home">
 <div class="hero">
 <h1>India’s Trusted Computer Education</h1>
 <p>Online Exam • Certificate • LMS</p>
 </div>
-<h2>Highlights</h2>
-<div id="frontContent" class="courses"></div>
+
+<h2>📢 Admin Notice</h2>
+<div id="noticeBox"></div>
 </section>
 
+<!-- COURSES -->
 <section id="courses" class="hidden">
 <h2>Our Courses</h2>
 <div class="courses">
@@ -75,6 +79,7 @@ button:hover{background:#1e40af}
 </div>
 </section>
 
+<!-- REGISTER -->
 <section id="register" class="hidden">
 <div class="card">
 <h2>Student Registration</h2>
@@ -85,6 +90,7 @@ button:hover{background:#1e40af}
 </div>
 </section>
 
+<!-- LOGIN -->
 <section id="login" class="hidden">
 <div class="card">
 <h2>Student Login</h2>
@@ -95,6 +101,20 @@ button:hover{background:#1e40af}
 </div>
 </section>
 
+<!-- STUDENT -->
+<section id="student" class="hidden">
+<div class="card">
+<h2>Student Dashboard</h2>
+<p>Name: <b id="sname"></b></p>
+<p>ID: <b id="sid"></b></p>
+<button onclick="startOtp()">Start Exam</button>
+
+<h3>📊 Exam History</h3>
+<div id="history"></div>
+</div>
+</section>
+
+<!-- OTP -->
 <section id="otpSec" class="hidden">
 <div class="card">
 <h2>OTP Verification</h2>
@@ -104,37 +124,34 @@ button:hover{background:#1e40af}
 </div>
 </section>
 
-<section id="student" class="hidden">
-<div class="card">
-<h2>Student Dashboard</h2>
-<p>Name: <b id="sname"></b></p>
-<p>ID: <b id="sid"></b></p>
-<button onclick="startOtp()">Start Exam</button>
-</div>
-</section>
-
+<!-- EXAM -->
 <section id="exam" class="hidden">
 <div class="card">
 <h2>Online Exam</h2>
-<p>Time: <b id="timer">60:00</b></p>
+<p>Time Left: <b id="timer">60:00</b></p>
 <p id="qtext"></p>
 <div id="options"></div>
 <button onclick="nextQuestion()">Next</button>
 </div>
 </section>
 
+<!-- RESULT -->
 <section id="result" class="hidden">
 <div class="card">
 <h2>Result</h2>
-<p>Name: <b id="rname"></b></p>
-<p>ID: <b id="rid"></b></p>
 <p id="rmarks"></p>
 </div>
 </section>
 
+<!-- ADMIN -->
 <section id="admin" class="hidden">
 <div class="card">
 <h2>Admin Panel</h2>
+
+<textarea id="noticeText" placeholder="Admin Notice"></textarea>
+<button onclick="addNotice()">Publish Notice</button>
+
+<hr>
 
 <textarea id="aq" placeholder="Question"></textarea>
 <input id="ao1" placeholder="Option 1">
@@ -149,6 +166,7 @@ button:hover{background:#1e40af}
 </div>
 </section>
 
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, remove } 
@@ -167,53 +185,57 @@ appId: "1:461970211371:web:50cf15eae93b63e267a06e"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let questions=[], examIndex=0, correct=0, wrong=0, otp=0, timerInt;
-let users=[{email:"admin@disha.com",pass:"admin123",role:"admin"}];
-let currentUser=null, editId=null;
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let history = JSON.parse(localStorage.getItem("history")) || [];
+let questions=[], index=0, correct=0, wrong=0, timerInt, otp=0, currentUser=null;
 
 window.show=id=>{
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 
-window.login=()=>{
-currentUser=users.find(x=>x.email===lemail.value&&x.pass===lpass.value);
-currentUser?show("student"):msg.innerText="Invalid";
+window.register=()=>{
+if(!rname.value||!remail.value||!rpass.value){alert("Fill all");return;}
+users.push({name:rname.value,email:remail.value,pass:rpass.value});
+localStorage.setItem("users",JSON.stringify(users));
+alert("Registered Successfully");
+show("login");
 }
 
-window.adminLogin=()=>{
-let e=prompt("Admin Email"),p=prompt("Password");
-let u=users.find(x=>x.email===e&&x.pass===p);
-if(!u){alert("Wrong");return;}
-show("admin");
+window.login=()=>{
+let u=users.find(x=>x.email===lemail.value&&x.pass===lpass.value);
+if(!u){msg.innerText="Invalid";return;}
+currentUser=u;
+sname.innerText=u.name;
+sid.innerText=u.email;
+loadHistory();
+show("student");
 }
 
 window.startOtp=()=>{
 otp=Math.floor(1000+Math.random()*9000);
-show("otpSec"); showOtp.innerText=otp;
+showOtp.innerText=otp;
+show("otpSec");
 }
 
 window.verifyOtp=()=>{
-if(otpInput.value==otp){show("exam"); startExam();}
+if(otpInput.value==otp){show("exam");startExam();}
 }
 
 function startExam(){
-examIndex=0; correct=0; wrong=0;
-startTimer(); loadQuestion();
-}
-
-function startTimer(){
-let t=3600;
+index=0;correct=0;wrong=0;
+let t=3600; // ✅ 60 MINUTES
 timerInt=setInterval(()=>{
-let m=Math.floor(t/60), s=t%60;
+let m=Math.floor(t/60),s=t%60;
 timer.innerText=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-if(--t<0){clearInterval(timerInt); showResult();}
+if(--t<0){clearInterval(timerInt);showResult();}
 },1000);
+loadQ();
 }
 
-function loadQuestion(){
-let q=questions[examIndex];
-qtext.innerText=(examIndex+1)+". "+q.q;
+function loadQ(){
+let q=questions[index];
+qtext.innerText=(index+1)+". "+q.q;
 options.innerHTML="";
 [q.o1,q.o2,q.o3,q.o4].forEach(o=>{
 options.innerHTML+=`<label><input type="radio" name="ans" value="${o}"> ${o}</label><br>`;
@@ -221,46 +243,48 @@ options.innerHTML+=`<label><input type="radio" name="ans" value="${o}"> ${o}</la
 }
 
 window.nextQuestion=()=>{
-let sel=document.querySelector('input[name=ans]:checked');
-sel && (sel.value===questions[examIndex].c?correct++:wrong++);
-++examIndex>=questions.length?showResult():loadQuestion();
+let s=document.querySelector("input[name=ans]:checked");
+if(s){s.value===questions[index].c?correct++:wrong++;}
+++index>=questions.length?showResult():loadQ();
 }
 
 function showResult(){
 clearInterval(timerInt);
+let rec={name:currentUser.name,correct,wrong,total:questions.length,date:new Date().toLocaleString()};
+history.push(rec);
+localStorage.setItem("history",JSON.stringify(history));
+rmarks.innerHTML=`Total: ${rec.total}<br>Correct: ${correct}<br>Wrong: ${wrong}`;
 show("result");
-rmarks.innerHTML=`Total: ${questions.length}<br>Correct: ${correct}<br>Wrong: ${wrong}<br>Marks: ${correct}/${questions.length}`;
 }
 
-window.addQuestion=()=>{
-let data={q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:ac.value};
-editId?set(ref(db,"questions/"+editId),data):push(ref(db,"questions"),data);
-editId=null; alert("Saved");
+function loadHistory(){
+history.filter(h=>h.name===currentUser.name)
+.forEach(h=>{
+document.getElementById("history").innerHTML+=
+`<div class="listBox">${h.date} → ${h.correct}/${h.total}</div>`;
+});
 }
 
-onValue(ref(db,"questions"),snap=>{
-questions=[]; questionList.innerHTML="";
-snap.forEach(c=>{
-let q=c.val(); q.id=c.key; questions.push(q);
-questionList.innerHTML+=`
-<div class='listBox'>
-${q.q}
-<br>
-<button onclick="editQ('${q.id}')">Edit</button>
-<button onclick="delQ('${q.id}')">Delete</button>
-</div>`;
+onValue(ref(db,"questions"),s=>{
+questions=[];questionList.innerHTML="";
+s.forEach(c=>{
+questions.push(c.val());
+questionList.innerHTML+=`<div class="listBox">${c.val().q}</div>`;
 });
 });
 
-window.editQ=id=>{
-let q=questions.find(x=>x.id===id);
-aq.value=q.q; ao1.value=q.o1; ao2.value=q.o2; ao3.value=q.o3; ao4.value=q.o4; ac.value=q.c;
-editId=id;
+window.addNotice=()=>push(ref(db,"notice"),{text:noticeText.value});
+onValue(ref(db,"notice"),s=>{
+noticeBox.innerHTML="";
+s.forEach(n=>noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`);
+});
+
+window.adminLogin=()=>{
+let e=prompt("Admin Email"),p=prompt("Password");
+if(e==="admin@disha.com"&&p==="admin123")show("admin");else alert("Wrong");
 }
 
-window.delQ=id=>{
-confirm("Delete?") && remove(ref(db,"questions/"+id));
-}
+window.logout=()=>{currentUser=null;show("home");}
 
 show("home");
 </script>
