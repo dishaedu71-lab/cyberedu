@@ -8,25 +8,88 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Poppins;background:linear-gradient(120deg,#020617,#0f172a,#1e3a8a);color:white}
-header{background:#020617;border-bottom:2px solid gold;position:sticky;top:0}
+
+/* 🔴 RED THEME HEADER */
+body{
+font-family:Poppins;
+color:white;
+background:linear-gradient(-45deg,#020617,#7f1d1d,#020617,#991b1b);
+background-size:400% 400%;
+animation:bgmove 12s ease infinite;
+}
+
+@keyframes bgmove{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+header{
+background:#7f1d1d;
+border-bottom:2px solid gold;
+position:sticky;
+top:0;
+z-index:99
+}
+
 nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
 nav h2{color:gold}
 nav a{color:white;margin:0 10px;cursor:pointer;text-decoration:none}
 nav a:hover{color:gold}
+
 section{padding:60px 20px}
 .hidden{display:none}
 h2{text-align:center;color:gold;margin-bottom:20px}
+
 .hero{text-align:center;padding:90px 20px}
 .hero h1{font-size:42px;color:gold}
+
 .courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
 .course{background:#0f172a;padding:15px;border-radius:10px;text-align:center}
-.card{background:white;color:black;max-width:520px;margin:20px auto;padding:20px;border-radius:10px}
-input,textarea{width:100%;padding:10px;margin:8px 0;border-radius:5px;border:1px solid #ccc}
-button{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:5px;cursor:pointer;margin:5px}
-button:hover{background:#1e40af}
-.listBox{background:#0f172a;color:white;padding:10px;margin:8px;border-radius:5px}
-.notice{background:#fde047;color:black;padding:10px;border-radius:6px;margin:8px}
+
+.card{
+background:white;
+color:black;
+max-width:520px;
+margin:20px auto;
+padding:20px;
+border-radius:10px
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:5px;
+border:1px solid #ccc
+}
+
+button{
+padding:10px 20px;
+background:#b91c1c;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin:5px
+}
+button:hover{background:#7f1d1d}
+
+.listBox{
+background:#0f172a;
+color:white;
+padding:10px;
+margin:8px;
+border-radius:5px
+}
+
+.notice{
+background:#fde047;
+color:black;
+padding:10px;
+border-radius:6px;
+margin:8px
+}
 </style>
 </head>
 
@@ -157,7 +220,7 @@ databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com"
 const db = getDatabase(app);
 
 let users=JSON.parse(localStorage.getItem("users"))||[];
-let questions=[], answers={}, index=0, score=0, timerInt, currentUser=null;
+let questions=[], answers={}, index=0, timerInt, currentUser=null;
 
 window.show=id=>{
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
@@ -182,7 +245,7 @@ show("student");
 };
 
 window.startExam=()=>{
-index=0;score=0;answers={};
+index=0;answers={};
 let t=3600;
 timerInt=setInterval(()=>{
 let m=Math.floor(t/60),s=t%60;
@@ -215,11 +278,22 @@ window.prevQuestion=()=>{
 if(index>0){index--;loadQ();}
 };
 
+/* ✅ RESULT FIX */
 function showResult(){
 clearInterval(timerInt);
-score=0;
-questions.forEach((q,i)=>{ if(answers[i]===q.c) score++; });
-rmarks.innerHTML=`Correct: ${score} / ${questions.length}`;
+let correct=0,attempted=0;
+questions.forEach((q,i)=>{
+if(answers[i]){
+attempted++;
+if(answers[i]===q.c) correct++;
+}
+});
+rmarks.innerHTML=`
+<b>Total Questions:</b> ${questions.length}<br>
+<b>Attempted:</b> ${attempted}<br>
+<b>Correct:</b> ${correct}<br>
+<b>Wrong:</b> ${attempted-correct}
+`;
 show("result");
 }
 
