@@ -30,21 +30,15 @@ section{padding:60px 20px}
 h2{text-align:center;color:gold;margin-bottom:20px}
 .hero{text-align:center;padding:90px 20px}
 .hero h1{font-size:42px;color:gold}
-.courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
-.course{background:#0f172a;padding:15px;border-radius:10px;text-align:center}
 .card{
 background:white;color:black;max-width:520px;
 margin:20px auto;padding:20px;border-radius:10px
 }
-input,textarea{
-width:100%;padding:10px;margin:8px 0;
-border-radius:5px;border:1px solid #ccc
-}
+input,textarea{width:100%;padding:10px;margin:8px 0}
 button{
 padding:10px 20px;background:#b91c1c;color:white;
 border:none;border-radius:5px;cursor:pointer;margin:5px
 }
-button:hover{background:#7f1d1d}
 .notice{background:#fde047;color:black;padding:10px;border-radius:6px;margin:8px}
 </style>
 </head>
@@ -75,24 +69,9 @@ button:hover{background:#7f1d1d}
 <div id="noticeBox"></div>
 </section>
 
-<section id="courses" class="hidden">
-<h2>Our Courses</h2>
-<div class="courses" id="courseList"></div>
-</section>
-
-<section id="about" class="hidden">
-<h2>Why Choose Us</h2>
-<div class="courses">
-<div class="course">100% Practical</div>
-<div class="course">Online Exam</div>
-<div class="course">Certificate</div>
-<div class="course">Job Oriented</div>
-</div>
-</section>
-
 <section id="register" class="hidden">
 <div class="card">
-<h2>Student Registration</h2>
+<h2>Register</h2>
 <input id="rname" placeholder="Name">
 <input id="remail" placeholder="Email">
 <input id="rpass" type="password" placeholder="Password">
@@ -102,7 +81,7 @@ button:hover{background:#7f1d1d}
 
 <section id="login" class="hidden">
 <div class="card">
-<h2>Student Login</h2>
+<h2>Login</h2>
 <input id="lemail" placeholder="Email">
 <input id="lpass" type="password" placeholder="Password">
 <p id="msg"></p>
@@ -138,40 +117,9 @@ button:hover{background:#7f1d1d}
 </div>
 </section>
 
-<section id="admin" class="hidden">
-<div class="card">
-<h2>Admin Panel</h2>
-
-<input id="examCodeSet" placeholder="Set Exam Code">
-<button onclick="setExamCode()">Update Exam Code</button>
-
-<hr>
-
-<textarea id="noticeText" placeholder="Admin Notice"></textarea>
-<button onclick="addNotice()">Publish Notice</button>
-
-<hr>
-
-<input id="cname" placeholder="Course Name">
-<input id="cfee" placeholder="Course Fees">
-<textarea id="csyll" placeholder="Course Syllabus"></textarea>
-<button onclick="addCourse()">Add Course</button>
-
-<hr>
-
-<textarea id="aq" placeholder="Question"></textarea>
-<input id="ao1" placeholder="Option 1">
-<input id="ao2" placeholder="Option 2">
-<input id="ao3" placeholder="Option 3">
-<input id="ao4" placeholder="Option 4">
-<input id="ac" placeholder="Correct Option (1-4)">
-<button onclick="addQuestion()">Save Question</button>
-</div>
-</section>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const app = initializeApp({
 apiKey: "AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
@@ -180,22 +128,33 @@ databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com"
 const db = getDatabase(app);
 
 let users = JSON.parse(localStorage.getItem("users")) || [];
-let questions = [], answers = {}, index = 0, timerInt, currentUser = null;
+let questions = [];
+let answers = {};
+let index = 0;
+let timerInt;
+let questionsLoaded = false;
+let currentUser = null;
 
-window.show = id => {
-document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+window.show=id=>{
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 };
 
-window.register = () => {
+onValue(ref(db,"questions"),snap=>{
+questions=[];
+snap.forEach(c=>questions.push(c.val()));
+questionsLoaded = questions.length > 0;
+});
+
+window.register=()=>{
 users.push({name:rname.value,email:remail.value,pass:rpass.value});
 localStorage.setItem("users",JSON.stringify(users));
 alert("Registered");
 show("login");
 };
 
-window.login = () => {
-let u = users.find(x=>x.email===lemail.value && x.pass===lpass.value);
+window.login=()=>{
+let u=users.find(x=>x.email===lemail.value && x.pass===lpass.value);
 if(!u){msg.innerText="Invalid Login";return;}
 currentUser=u;
 sname.innerText=u.name;
@@ -203,7 +162,8 @@ sid.innerText=u.email;
 show("student");
 };
 
-window.verifyExamCode = () => {
+window.verifyExamCode=()=>{
+if(!questionsLoaded){alert("Questions loading, try again");return;}
 onValue(ref(db,"examCode"),snap=>{
 if(examCodeInput.value===snap.val()) startExam();
 else alert("Wrong Exam Code");
@@ -211,7 +171,8 @@ else alert("Wrong Exam Code");
 };
 
 function startExam(){
-index=0;answers={};
+index=0;
+answers={};
 let t=3600;
 timerInt=setInterval(()=>{
 let m=Math.floor(t/60),s=t%60;
@@ -224,7 +185,7 @@ loadQ();
 
 function loadQ(){
 let q=questions[index];
-qtext.innerText=(index+1)+". "+q.q;
+qtext.innerText=`${index+1}. ${q.q}`;
 options.innerHTML="";
 [q.o1,q.o2,q.o3,q.o4].forEach((o,i)=>{
 options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}" ${answers[index]==i+1?"checked":""}> ${o}</label><br>`;
@@ -232,66 +193,43 @@ options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}" ${answe
 }
 
 window.nextQuestion=()=>{
-let s=document.querySelector("input[name=ans]:checked");
-if(s) answers[index]=+s.value;
-if(index<questions.length-1){index++;loadQ();}
-else showResult();
+let sel=document.querySelector("input[name=ans]:checked");
+if(sel) answers[index]=+sel.value;
+
+if(index < questions.length-1){
+index++;
+loadQ();
+}else{
+showResult();
+}
 };
 
 window.prevQuestion=()=>{
-if(index>0){index--;loadQ();}
+if(index>0){
+index--;
+loadQ();
+}
 };
 
 function showResult(){
 clearInterval(timerInt);
 let correct=0,attempted=0;
 questions.forEach((q,i)=>{
-if(answers[i]){attempted++;if(answers[i]===q.c) correct++;}
+if(answers[i]){
+attempted++;
+if(answers[i]===q.c) correct++;
+}
 });
-rmarks.innerHTML=`Total: ${questions.length}<br>Attempted: ${attempted}<br>Correct: ${correct}<br>Wrong: ${attempted-correct}`;
+rmarks.innerHTML=`Total: ${questions.length}<br>
+Attempted: ${attempted}<br>
+Correct: ${correct}<br>
+Wrong: ${attempted-correct}`;
 show("result");
 }
 
-onValue(ref(db,"questions"),snap=>{
-questions=[];
-snap.forEach(c=>questions.push(c.val()));
-});
-
-window.addQuestion=()=>{
-push(ref(db,"questions"),{q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:+ac.value});
-alert("Question Added");
-};
-
-window.addNotice=()=>{
-push(ref(db,"notice"),{text:noticeText.value});
-noticeText.value="";
-};
-
-onValue(ref(db,"notice"),snap=>{
-noticeBox.innerHTML="";
-snap.forEach(n=>noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`);
-});
-
-window.addCourse=()=>{
-push(ref(db,"courses"),{name:cname.value,fee:cfee.value,syll:csyll.value});
-};
-
-onValue(ref(db,"courses"),snap=>{
-courseList.innerHTML="";
-snap.forEach(c=>{
-let v=c.val();
-courseList.innerHTML+=`<div class="course"><h3>${v.name}</h3><p>Fees: ${v.fee}</p><p>${v.syll}</p></div>`;
-});
-});
-
-window.setExamCode=()=>{
-set(ref(db,"examCode"),examCodeSet.value);
-alert("Exam Code Updated");
-};
-
 window.adminLogin=()=>{
 let e=prompt("Admin Email"),p=prompt("Password");
-if(e==="admin@disha.com"&&p==="admin123") show("admin");
+if(e==="admin@disha.com" && p==="admin123") alert("Admin OK");
 else alert("Wrong Admin Login");
 };
 
