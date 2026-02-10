@@ -32,11 +32,19 @@ h2{text-align:center;color:gold;margin-bottom:20px}
 .hero h1{font-size:42px;color:gold}
 .courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
 .course{background:#0f172a;padding:15px;border-radius:10px;text-align:center}
-.card{background:white;color:black;max-width:520px;margin:20px auto;padding:20px;border-radius:10px}
-input,textarea{width:100%;padding:10px;margin:8px 0;border-radius:5px;border:1px solid #ccc}
-button{padding:10px 20px;background:#b91c1c;color:white;border:none;border-radius:5px;cursor:pointer;margin:5px}
+.card{
+background:white;color:black;max-width:520px;
+margin:20px auto;padding:20px;border-radius:10px
+}
+input,textarea{
+width:100%;padding:10px;margin:8px 0;
+border-radius:5px;border:1px solid #ccc
+}
+button{
+padding:10px 20px;background:#b91c1c;color:white;
+border:none;border-radius:5px;cursor:pointer;margin:5px
+}
 button:hover{background:#7f1d1d}
-.listBox{background:#0f172a;color:white;padding:10px;margin:8px;border-radius:5px}
 .notice{background:#fde047;color:black;padding:10px;border-radius:6px;margin:8px}
 </style>
 </head>
@@ -69,13 +77,7 @@ button:hover{background:#7f1d1d}
 
 <section id="courses" class="hidden">
 <h2>Our Courses</h2>
-<div class="courses">
-<div class="course">ADCA</div>
-<div class="course">CCC</div>
-<div class="course">O-Level</div>
-<div class="course">Tally Prime</div>
-</div>
-<div id="courseList"></div>
+<div class="courses" id="courseList"></div>
 </section>
 
 <section id="about" class="hidden">
@@ -164,15 +166,12 @@ button:hover{background:#7f1d1d}
 <input id="ao4" placeholder="Option 4">
 <input id="ac" placeholder="Correct Option (1-4)">
 <button onclick="addQuestion()">Save Question</button>
-
-<h3>Question Bank</h3>
-<div id="questionList"></div>
 </div>
 </section>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const app = initializeApp({
 apiKey: "AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
@@ -180,56 +179,33 @@ databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com"
 });
 const db = getDatabase(app);
 
-// ===== CONFIG =====
-const CONFIG={
-negative:false,
-negativeVal:0.25,
-autoSubmit:true,
-shuffle:true,
-certMin:60
-};
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let questions = [], answers = {}, index = 0, timerInt, currentUser = null;
 
-// ===== NAV =====
-window.show=id=>{
-document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+window.show = id => {
+document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 };
 
-// ===== STUDENT =====
-let users=JSON.parse(localStorage.getItem("users"))||[];
-let currentUser=null;
-window.register=()=>{
-if(users.find(u=>u.email===remail.value)) return alert("Already Registered");
+window.register = () => {
 users.push({name:rname.value,email:remail.value,pass:rpass.value});
 localStorage.setItem("users",JSON.stringify(users));
-alert("Registered");show("login");
+alert("Registered");
+show("login");
 };
-window.login=()=>{
-let u=users.find(x=>x.email===lemail.value&&x.pass===lpass.value);
-if(!u) return msg.innerText="Invalid Login";
+
+window.login = () => {
+let u = users.find(x=>x.email===lemail.value && x.pass===lpass.value);
+if(!u){msg.innerText="Invalid Login";return;}
 currentUser=u;
 sname.innerText=u.name;
 sid.innerText=u.email;
 show("student");
 };
 
-// ===== EXAM =====
-let questions=[],answers={},index=0,timerInt;
-document.addEventListener("visibilitychange",()=>{
-if(document.hidden && CONFIG.autoSubmit) showResult();
-});
-
-function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
-
-onValue(ref(db,"questions"),s=>{
-questions=[];
-s.forEach(c=>questions.push({...c.val(),id:c.key}));
-if(CONFIG.shuffle) shuffle(questions);
-});
-
-window.verifyExamCode=()=>{
-onValue(ref(db,"examCode"),s=>{
-if(examCodeInput.value===s.val()) startExam();
+window.verifyExamCode = () => {
+onValue(ref(db,"examCode"),snap=>{
+if(examCodeInput.value===snap.val()) startExam();
 else alert("Wrong Exam Code");
 },{onlyOnce:true});
 };
@@ -242,7 +218,8 @@ let m=Math.floor(t/60),s=t%60;
 timer.innerText=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 if(--t<0){clearInterval(timerInt);showResult();}
 },1000);
-show("exam");loadQ();
+show("exam");
+loadQ();
 }
 
 function loadQ(){
@@ -257,49 +234,61 @@ options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}" ${answe
 window.nextQuestion=()=>{
 let s=document.querySelector("input[name=ans]:checked");
 if(s) answers[index]=+s.value;
-index<questions.length-1?(index++,loadQ()):showResult();
+if(index<questions.length-1){index++;loadQ();}
+else showResult();
 };
-window.prevQuestion=()=>{if(index>0){index--;loadQ();}};
+
+window.prevQuestion=()=>{
+if(index>0){index--;loadQ();}
+};
 
 function showResult(){
 clearInterval(timerInt);
 let correct=0,attempted=0;
 questions.forEach((q,i)=>{
-if(answers[i]){
-attempted++;
-if(answers[i]===q.c) correct++;
-else if(CONFIG.negative) correct-=CONFIG.negativeVal;
-}
-});
-push(ref(db,"results/"+btoa(currentUser.email)),{
-name:currentUser.name,
-correct,attempted,total:questions.length,
-percent:Math.round((correct/questions.length)*100),
-time:Date.now()
+if(answers[i]){attempted++;if(answers[i]===q.c) correct++;}
 });
 rmarks.innerHTML=`Total: ${questions.length}<br>Attempted: ${attempted}<br>Correct: ${correct}<br>Wrong: ${attempted-correct}`;
 show("result");
 }
 
-// ===== NOTICE =====
-window.addNotice=()=>push(ref(db,"notice"),{text:noticeText.value,time:Date.now()});
-onValue(ref(db,"notice"),s=>{
-noticeBox.innerHTML="";
-s.forEach(n=>noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`);
+onValue(ref(db,"questions"),snap=>{
+questions=[];
+snap.forEach(c=>questions.push(c.val()));
 });
 
-// ===== COURSE =====
-window.addCourse=()=>push(ref(db,"courses"),{name:cname.value,fee:cfee.value,syll:csyll.value});
-onValue(ref(db,"courses"),s=>{
+window.addQuestion=()=>{
+push(ref(db,"questions"),{q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:+ac.value});
+alert("Question Added");
+};
+
+window.addNotice=()=>{
+push(ref(db,"notice"),{text:noticeText.value});
+noticeText.value="";
+};
+
+onValue(ref(db,"notice"),snap=>{
+noticeBox.innerHTML="";
+snap.forEach(n=>noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`);
+});
+
+window.addCourse=()=>{
+push(ref(db,"courses"),{name:cname.value,fee:cfee.value,syll:csyll.value});
+};
+
+onValue(ref(db,"courses"),snap=>{
 courseList.innerHTML="";
-s.forEach(c=>{
+snap.forEach(c=>{
 let v=c.val();
 courseList.innerHTML+=`<div class="course"><h3>${v.name}</h3><p>Fees: ${v.fee}</p><p>${v.syll}</p></div>`;
 });
 });
 
-// ===== ADMIN =====
-window.setExamCode=()=>{set(ref(db,"examCode"),examCodeSet.value);alert("Updated");};
+window.setExamCode=()=>{
+set(ref(db,"examCode"),examCodeSet.value);
+alert("Exam Code Updated");
+};
+
 window.adminLogin=()=>{
 let e=prompt("Admin Email"),p=prompt("Password");
 if(e==="admin@disha.com"&&p==="admin123") show("admin");
