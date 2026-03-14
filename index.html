@@ -1,365 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Disha Computer Education LMS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-font-family:Poppins;
-color:white;
-background:linear-gradient(-45deg,#020617,#7f1d1d,#020617,#991b1b);
-background-size:400% 400%;
-animation:bgmove 12s ease infinite;
-}
-@keyframes bgmove{
-0%{background-position:0% 50%}
-50%{background-position:100% 50%}
-100%{background-position:0% 50%}
-}
-
-header{background:#7f1d1d;border-bottom:2px solid gold;position:sticky;top:0;z-index:99}
-nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
-nav h2{color:gold}
-nav a{color:white;margin:0 10px;cursor:pointer;text-decoration:none}
-nav a:hover{color:gold}
-
-section{padding:60px 20px}
-.hidden{display:none}
-h2{text-align:center;color:gold;margin-bottom:20px}
-
-.hero{text-align:center;padding:90px 20px}
-.hero h1{font-size:42px;color:gold}
-
-.courses{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px
-}
-
-.course{
-background:#0f172a;
-padding:15px;
-border-radius:10px;
-text-align:center
-}
-
-.card{
-background:white;
-color:black;
-max-width:520px;
-margin:20px auto;
-padding:20px;
-border-radius:10px
-}
-
-input,textarea{
-width:100%;
-padding:10px;
-margin:8px 0;
-border-radius:5px;
-border:1px solid #ccc
-}
-
-button{
-padding:10px 20px;
-background:#b91c1c;
-color:white;
-border:none;
-border-radius:5px;
-cursor:pointer;
-margin:5px
-}
-
-button:hover{background:#7f1d1d}
-
-.listBox{
-background:#0f172a;
-color:white;
-padding:10px;
-margin:8px;
-border-radius:5px
-}
-
-.notice{
-background:#fde047;
-color:black;
-padding:10px;
-border-radius:6px;
-margin:8px
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Disha Computer Education LMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:'Poppins', sans-serif;
+            color:white;
+            background:linear-gradient(-45deg,#020617,#7f1d1d,#020617,#991b1b);
+            background-size:400% 400%;
+            animation:bgmove 12s ease infinite;
+            min-height: 100vh;
+        }
+        @keyframes bgmove{
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+        header{background:#7f1d1d;border-bottom:2px solid gold;position:sticky;top:0;z-index:99}
+        nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px; flex-wrap: wrap;}
+        nav h2{color:gold}
+        nav div a{color:white;margin:0 10px;cursor:pointer;text-decoration:none; font-weight: 600;}
+        nav div a:hover{color:gold}
+        section{padding:40px 20px}
+        .hidden{display:none}
+        h2{text-align:center;color:gold;margin-bottom:20px}
+        .hero{text-align:center;padding:50px 20px}
+        .hero h1{font-size:36px;color:gold}
+        .courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+        .course{background:#0f172a;padding:15px;border-radius:10px;text-align:center; border: 1px solid #334155;}
+        .card{background:white;color:black;max-width:550px;margin:20px auto;padding:25px;border-radius:12px; box-shadow: 0 10px 20px rgba(0,0,0,0.3)}
+        input,textarea,select{width:100%;padding:12px;margin:10px 0;border-radius:5px;border:1px solid #ccc; font-family: inherit;}
+        button{padding:10px 20px;background:#b91c1c;color:white;border:none;border-radius:5px;cursor:pointer;margin:5px; font-weight: 600;}
+        button:hover{background:#7f1d1d}
+        .listBox{background:#1e293b;color:white;padding:12px;margin:10px 0;border-radius:8px; border-left: 5px solid gold;}
+        .notice{background:#fde047;color:black;padding:15px;border-radius:6px;margin:10px auto; max-width: 800px; font-weight: 500;}
+        .option-item{display: block; background: #f1f5f9; padding: 10px; margin: 5px 0; border-radius: 5px; cursor: pointer;}
+        .option-item:hover{background: #e2e8f0;}
+    </style>
 </head>
-
 <body>
 
 <header>
-<nav>
-<h2>Disha Computer</h2>
-<div>
-<a onclick="show('home')">Home</a>
-<a onclick="show('courses')">Courses</a>
-<a onclick="show('about')">About</a>
-<a onclick="show('login')">Student Login</a>
-<a onclick="show('register')">Register</a>
-<a onclick="adminLogin()">Admin</a>
-<a onclick="logout()">Logout</a>
-</div>
-</nav>
+    <nav>
+        <h2>Disha Computer</h2>
+        <div>
+            <a onclick="show('home')">Home</a>
+            <a onclick="show('courses')">Courses</a>
+            <a onclick="show('login')">Login</a>
+            <a onclick="show('register')">Register</a>
+            <a onclick="adminLogin()">Admin</a>
+            <a onclick="logout()">Logout</a>
+        </div>
+    </nav>
 </header>
 
 <section id="home">
-<div class="hero">
-<h1>India’s Trusted Computer Education</h1>
-<p>Online Exam • Certificate • LMS</p>
-</div>
-
-<h2>📢 Admin Notice</h2>
-<div id="noticeBox"></div>
+    <div class="hero">
+        <h1>India’s Trusted Computer Education</h1>
+        <p>Online Exam • Certificate • LMS</p>
+    </div>
+    <h2>📢 Admin Notices</h2>
+    <div id="noticeBox"></div>
 </section>
 
 <section id="courses" class="hidden">
-<h2>Our Courses</h2>
-<div class="courses">
-<div class="course">ADCA</div>
-<div class="course">CCC</div>
-<div class="course">O-Level</div>
-<div class="course">Tally Prime</div>
-</div>
-<div id="courseList"></div>
-</section>
-
-<section id="about" class="hidden">
-<h2>Why Choose Us</h2>
-<div class="courses">
-<div class="course">100% Practical</div>
-<div class="course">Online Exam</div>
-<div class="course">Certificate</div>
-<div class="course">Job Oriented</div>
-</div>
+    <h2>Our Popular Courses</h2>
+    <div class="courses">
+        <div class="course"><h3>ADCA</h3><p>Advanced Diploma</p></div>
+        <div class="course"><h3>CCC</h3><p>Govt. Recognized</p></div>
+        <div class="course"><h3>O-Level</h3><p>NIELIT Certified</p></div>
+        <div class="course"><h3>Tally Prime</h3><p>Accounting</p></div>
+    </div>
 </section>
 
 <section id="register" class="hidden">
-<div class="card">
-<h2>Student Registration</h2>
-<input id="rname" placeholder="Name">
-<input id="remail" placeholder="Email">
-<input id="rpass" type="password" placeholder="Password">
-<button onclick="register()">Register</button>
-</div>
+    <div class="card">
+        <h2>Student Registration</h2>
+        <input id="rname" placeholder="Full Name">
+        <input id="remail" placeholder="Email Address">
+        <input id="rpass" type="password" placeholder="Create Password">
+        <button onclick="register()">Register Now</button>
+    </div>
 </section>
 
 <section id="login" class="hidden">
-<div class="card">
-<h2>Student Login</h2>
-<input id="lemail" placeholder="Email">
-<input id="lpass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-</div>
+    <div class="card">
+        <h2>Student Login</h2>
+        <input id="lemail" placeholder="Email">
+        <input id="lpass" type="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
 </section>
 
 <section id="student" class="hidden">
-<div class="card">
-<h2>Student Dashboard</h2>
-<p>Name: <b id="sname"></b></p>
-<p>ID: <b id="sid"></b></p>
-
-<input id="examCodeInput" placeholder="Enter Exam Code">
-<button onclick="verifyExamCode()">Start Exam</button>
-</div>
+    <div class="card">
+        <h2>Student Dashboard</h2>
+        <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-bottom:15px;">
+            <p>Welcome, <b id="sname" style="color:#b91c1c"></b></p>
+            <p>Student ID: <b id="sid"></b></p>
+        </div>
+        <input id="examCodeInput" placeholder="Enter Secret Exam Code">
+        <button onclick="verifyExamCode()" style="width:100%">Verify & Start Exam</button>
+    </div>
 </section>
 
 <section id="exam" class="hidden">
-<div class="card">
-<h2>Online Exam</h2>
-<p>Time Left: <b id="timer">60:00</b></p>
-
-<p id="qtext"></p>
-<div id="options"></div>
-
-<button onclick="prevQuestion()">Back</button>
-<button onclick="nextQuestion()">Next</button>
-</div>
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:15px;">
+            <h3 id="qcount">Question 1</h3>
+            <b id="timer" style="color:red">60:00</b>
+        </div>
+        <p id="qtext" style="font-size:18px; margin-bottom:15px; font-weight:600;"></p>
+        <div id="options"></div>
+        <hr style="margin:20px 0">
+        <div style="display:flex; justify-content:space-between">
+            <button onclick="prevQuestion()">← Previous</button>
+            <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+    </div>
 </section>
 
 <section id="result" class="hidden">
-<div class="card">
-<h2>Result</h2>
-<p id="rmarks"></p>
-</div>
+    <div class="card" style="text-align:center">
+        <h2>Exam Result</h2>
+        <div style="font-size:50px; margin:20px 0" id="rmarks">0/0</div>
+        <p id="resultStatus"></p>
+        <button onclick="show('home')">Back to Home</button>
+    </div>
 </section>
 
 <section id="admin" class="hidden">
-<div class="card">
-<h2>Admin Panel</h2>
+    <div class="card">
+        <h2>Admin Control Panel</h2>
+        
+        <h4>1. Manage Exam Code</h4>
+        <input id="examCodeSet" placeholder="Set Current Exam Code">
+        <button onclick="setExamCode()">Update Code</button>
+        <hr>
 
-<input id="examCodeSet" placeholder="Set Exam Code">
-<button onclick="setExamCode()">Update Exam Code</button>
+        <h4>2. Post New Notice</h4>
+        <textarea id="noticeText" placeholder="Write notice here..."></textarea>
+        <button onclick="addNotice()">Publish Notice</button>
+        <hr>
 
-<hr>
+        <h4>3. Add Exam Question</h4>
+        <textarea id="aq" placeholder="Enter Question"></textarea>
+        <input id="ao1" placeholder="Option 1">
+        <input id="ao2" placeholder="Option 2">
+        <input id="ao3" placeholder="Option 3">
+        <input id="ao4" placeholder="Option 4">
+        <select id="ac">
+            <option value="">Select Correct Option</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+            <option value="4">Option 4</option>
+        </select>
+        <button onclick="addQuestion()" style="background:green">Save Question to Database</button>
 
-<textarea id="noticeText" placeholder="Admin Notice"></textarea>
-<button onclick="addNotice()">Publish Notice</button>
-
-<hr>
-
-<textarea id="aq" placeholder="Question"></textarea>
-<input id="ao1" placeholder="Option 1">
-<input id="ao2" placeholder="Option 2">
-<input id="ao3" placeholder="Option 3">
-<input id="ao4" placeholder="Option 4">
-<input id="ac" placeholder="Correct Option (1-4)">
-<button onclick="addQuestion()">Save Question</button>
-
-<div id="questionList"></div>
-
-</div>
+        <h4 style="margin-top:20px">Question Bank</h4>
+        <div id="questionList"></div>
+    </div>
 </section>
 
 <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, set, get } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+    const firebaseConfig = {
+        apiKey: "AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
+        databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com"
+    };
 
-const app = initializeApp({
-apiKey:"AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
-databaseURL:"https://disha-computer-education-default-rtdb.firebaseio.com"
-});
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-const db=getDatabase(app);
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let questions = [], answers = {}, index = 0, currentUser = null;
 
-let users=JSON.parse(localStorage.getItem("users"))||[];
-let questions=[],answers={},index=0,currentUser=null,timerInt;
+    // --- Navigation Functions ---
+    window.show = (id) => {
+        document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+        document.getElementById(id).classList.remove("hidden");
+    };
 
-window.show=id=>{
-document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
-};
+    // --- Student Logic ---
+    window.register = () => {
+        if(!rname.value || !remail.value) return alert("Please fill all details");
+        users.push({name: rname.value, email: remail.value, pass: rpass.value});
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Registration Successful!");
+        show("login");
+    };
 
-window.register=()=>{
-users.push({name:rname.value,email:remail.value,pass:rpass.value});
-localStorage.setItem("users",JSON.stringify(users));
-alert("Registered");
-show("login");
-};
+    window.login = () => {
+        let u = users.find(x => x.email === lemail.value && x.pass === lpass.value);
+        if(!u) return alert("Invalid Credentials");
+        currentUser = u;
+        sname.innerText = u.name;
+        sid.innerText = u.email;
+        show("student");
+    };
 
-window.login=()=>{
-let u=users.find(x=>x.email===lemail.value&&x.pass===lpass.value);
-if(!u) return alert("Invalid Login");
-currentUser=u;
-sname.innerText=u.name;
-sid.innerText=u.email;
-show("student");
-};
+    window.verifyExamCode = async () => {
+        const snap = await get(ref(db, "examCode"));
+        if(!snap.exists()) return alert("No active exam code found.");
+        if(examCodeInput.value.trim() === String(snap.val()).trim()){
+            if(questions.length === 0) return alert("No questions available in database!");
+            startExam();
+        } else {
+            alert("Incorrect Exam Code");
+        }
+    };
 
-window.verifyExamCode=async()=>{
+    function startExam(){
+        index = 0;
+        answers = {};
+        show("exam");
+        loadQ();
+    }
 
-const snap=await get(ref(db,"examCode"));
+    function loadQ(){
+        let q = questions[index];
+        qcount.innerText = `Question ${index + 1} of ${questions.length}`;
+        qtext.innerText = q.q;
+        options.innerHTML = "";
+        
+        [q.o1, q.o2, q.o3, q.o4].forEach((o, i) => {
+            let checked = answers[index] === (i + 1) ? "checked" : "";
+            options.innerHTML += `
+                <label class="option-item">
+                    <input type="radio" name="ans" value="${i+1}" ${checked}> ${o}
+                </label>`;
+        });
 
-if(!snap.exists()) return alert("Exam Code Not Set");
+        // Change button text on last question
+        nextBtn.innerText = (index === questions.length - 1) ? "Finish Exam" : "Next →";
+    }
 
-if(examCodeInput.value.trim()!==String(snap.val()).trim())
-return alert("Wrong Exam Code");
+    window.nextQuestion = () => {
+        let selected = document.querySelector("input[name=ans]:checked");
+        if(selected) answers[index] = parseInt(selected.value);
+        
+        if(index < questions.length - 1){
+            index++;
+            loadQ();
+        } else {
+            showResult();
+        }
+    };
 
-startExam();
-};
+    window.prevQuestion = () => {
+        if(index > 0){
+            index--;
+            loadQ();
+        }
+    };
 
-function startExam(){
-index=0;
-answers={};
-show("exam");
-loadQ();
-}
+    function showResult(){
+        let correct = 0;
+        questions.forEach((q, i) => {
+            if(answers[i] === parseInt(q.c)) correct++;
+        });
+        rmarks.innerText = `${correct} / ${questions.length}`;
+        let percent = (correct / questions.length) * 100;
+        resultStatus.innerText = percent >= 40 ? "Status: Passed" : "Status: Failed";
+        show("result");
+    }
 
-function loadQ(){
-let q=questions[index];
-qtext.innerText=(index+1)+". "+q.q;
-options.innerHTML="";
-[q.o1,q.o2,q.o3,q.o4].forEach((o,i)=>{
-options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}"> ${o}</label><br>`;
-});
-}
+    // --- Admin Functions ---
+    window.addQuestion = () => {
+        if(!aq.value || !ac.value) return alert("Fields cannot be empty");
+        push(ref(db, "questions"), {
+            q: aq.value, o1: ao1.value, o2: ao2.value, o3: ao3.value, o4: ao4.value, c: ac.value
+        });
+        aq.value = ao1.value = ao2.value = ao3.value = ao4.value = ac.value = "";
+        alert("Question Added!");
+    };
 
-window.nextQuestion=()=>{
-let s=document.querySelector("input[name=ans]:checked");
-if(s) answers[index]=+s.value;
-index<questions.length-1?(index++,loadQ()):showResult();
-};
+    window.delQ = (id) => {
+        if(confirm("Delete this question?")) remove(ref(db, "questions/" + id));
+    };
 
-window.prevQuestion=()=>{
-if(index>0){index--;loadQ();}
-};
+    window.setExamCode = () => {
+        set(ref(db, "examCode"), examCodeSet.value);
+        alert("Exam Code Updated!");
+    };
 
-function showResult(){
-let correct=0;
-questions.forEach((q,i)=>{
-if(answers[i]===q.c) correct++;
-});
-rmarks.innerHTML=`Correct : ${correct} / ${questions.length}`;
-show("result");
-}
+    window.addNotice = () => {
+        if(!noticeText.value) return;
+        push(ref(db, "notice"), {text: noticeText.value});
+        noticeText.value = "";
+    };
 
-onValue(ref(db,"questions"),snap=>{
-questions=[];
-questionList.innerHTML="";
-snap.forEach(c=>{
-let q=c.val();
-q.id=c.key;
-questions.push(q);
-questionList.innerHTML+=`<div class="listBox">${q.q}
-<button onclick="delQ('${q.id}')">Delete</button></div>`;
-});
-});
+    window.adminLogin = () => {
+        let e = prompt("Admin Email"), p = prompt("Password");
+        if(e === "admin@disha.com" && p === "admin123") show("admin");
+        else alert("Unauthorized Access");
+    };
 
-window.addQuestion=()=>{
-push(ref(db,"questions"),{
-q:aq.value,
-o1:ao1.value,
-o2:ao2.value,
-o3:ao3.value,
-o4:ao4.value,
-c:+ac.value
-});
-};
+    // --- Real-time Data Listeners ---
+    onValue(ref(db, "questions"), snap => {
+        questions = [];
+        questionList.innerHTML = "";
+        snap.forEach(child => {
+            let q = child.val();
+            q.id = child.key;
+            questions.push(q);
+            questionList.innerHTML += `<div class="listBox">${q.q} <button onclick="delQ('${q.id}')" style="background:orange; padding:2px 8px">X</button></div>`;
+        });
+    });
 
-window.delQ=id=>{
-remove(ref(db,"questions/"+id));
-};
+    onValue(ref(db, "notice"), snap => {
+        noticeBox.innerHTML = "";
+        snap.forEach(n => {
+            noticeBox.innerHTML += `<div class="notice">✨ ${n.val().text}</div>`;
+        });
+    });
 
-window.addNotice=()=>{
-push(ref(db,"notice"),{text:noticeText.value});
-noticeText.value="";
-};
+    window.logout = () => {
+        currentUser = null;
+        show("home");
+    };
 
-onValue(ref(db,"notice"),snap=>{
-noticeBox.innerHTML="";
-snap.forEach(n=>{
-noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`;
-});
-});
-
-window.setExamCode=()=>{
-set(ref(db,"examCode"),examCodeSet.value);
-alert("Exam Code Updated");
-};
-
-window.adminLogin=()=>{
-let e=prompt("Admin Email"),p=prompt("Password");
-if(e==="admin@disha.com"&&p==="admin123") show("admin");
-else alert("Wrong Admin Login");
-};
-
-window.logout=()=>{
-currentUser=null;
-show("home");
-};
-
-show("home");
-
+    // Initialize
+    show("home");
 </script>
 
 </body>
