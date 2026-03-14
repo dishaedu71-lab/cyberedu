@@ -21,33 +21,77 @@ animation:bgmove 12s ease infinite;
 50%{background-position:100% 50%}
 100%{background-position:0% 50%}
 }
+
 header{background:#7f1d1d;border-bottom:2px solid gold;position:sticky;top:0;z-index:99}
 nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
 nav h2{color:gold}
 nav a{color:white;margin:0 10px;cursor:pointer;text-decoration:none}
 nav a:hover{color:gold}
+
 section{padding:60px 20px}
 .hidden{display:none}
 h2{text-align:center;color:gold;margin-bottom:20px}
+
 .hero{text-align:center;padding:90px 20px}
 .hero h1{font-size:42px;color:gold}
-.courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
-.course{background:#0f172a;padding:15px;border-radius:10px;text-align:center}
+
+.courses{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px
+}
+
+.course{
+background:#0f172a;
+padding:15px;
+border-radius:10px;
+text-align:center
+}
+
 .card{
-background:white;color:black;max-width:520px;
-margin:20px auto;padding:20px;border-radius:10px
+background:white;
+color:black;
+max-width:520px;
+margin:20px auto;
+padding:20px;
+border-radius:10px
 }
+
 input,textarea{
-width:100%;padding:10px;margin:8px 0;
-border-radius:5px;border:1px solid #ccc
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:5px;
+border:1px solid #ccc
 }
+
 button{
-padding:10px 20px;background:#b91c1c;color:white;
-border:none;border-radius:5px;cursor:pointer;margin:5px
+padding:10px 20px;
+background:#b91c1c;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin:5px
 }
+
 button:hover{background:#7f1d1d}
-.listBox{background:#0f172a;color:white;padding:10px;margin:8px;border-radius:5px}
-.notice{background:#fde047;color:black;padding:10px;border-radius:6px;margin:8px}
+
+.listBox{
+background:#0f172a;
+color:white;
+padding:10px;
+margin:8px;
+border-radius:5px
+}
+
+.notice{
+background:#fde047;
+color:black;
+padding:10px;
+border-radius:6px;
+margin:8px
+}
 </style>
 </head>
 
@@ -114,7 +158,6 @@ button:hover{background:#7f1d1d}
 <h2>Student Login</h2>
 <input id="lemail" placeholder="Email">
 <input id="lpass" type="password" placeholder="Password">
-<p id="msg"></p>
 <button onclick="login()">Login</button>
 </div>
 </section>
@@ -124,6 +167,7 @@ button:hover{background:#7f1d1d}
 <h2>Student Dashboard</h2>
 <p>Name: <b id="sname"></b></p>
 <p>ID: <b id="sid"></b></p>
+
 <input id="examCodeInput" placeholder="Enter Exam Code">
 <button onclick="verifyExamCode()">Start Exam</button>
 </div>
@@ -133,8 +177,10 @@ button:hover{background:#7f1d1d}
 <div class="card">
 <h2>Online Exam</h2>
 <p>Time Left: <b id="timer">60:00</b></p>
+
 <p id="qtext"></p>
 <div id="options"></div>
+
 <button onclick="prevQuestion()">Back</button>
 <button onclick="nextQuestion()">Next</button>
 </div>
@@ -161,13 +207,6 @@ button:hover{background:#7f1d1d}
 
 <hr>
 
-<input id="cname" placeholder="Course Name">
-<input id="cfee" placeholder="Course Fees">
-<textarea id="csyll" placeholder="Course Syllabus"></textarea>
-<button onclick="addCourse()">Add Course</button>
-
-<hr>
-
 <textarea id="aq" placeholder="Question"></textarea>
 <input id="ao1" placeholder="Option 1">
 <input id="ao2" placeholder="Option 2">
@@ -176,15 +215,15 @@ button:hover{background:#7f1d1d}
 <input id="ac" placeholder="Correct Option (1-4)">
 <button onclick="addQuestion()">Save Question</button>
 
-<h3>Question Bank</h3>
 <div id="questionList"></div>
+
 </div>
 </section>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove, set, get } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const app = initializeApp({
 apiKey:"AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
@@ -194,7 +233,7 @@ databaseURL:"https://disha-computer-education-default-rtdb.firebaseio.com"
 const db=getDatabase(app);
 
 let users=JSON.parse(localStorage.getItem("users"))||[];
-let questions=[],answers={},index=0,timerInt,currentUser=null;
+let questions=[],answers={},index=0,currentUser=null,timerInt;
 
 window.show=id=>{
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
@@ -202,7 +241,6 @@ document.getElementById(id).classList.remove("hidden");
 };
 
 window.register=()=>{
-if(!rname.value||!remail.value||!rpass.value) return alert("Fill all");
 users.push({name:rname.value,email:remail.value,pass:rpass.value});
 localStorage.setItem("users",JSON.stringify(users));
 alert("Registered");
@@ -211,44 +249,38 @@ show("login");
 
 window.login=()=>{
 let u=users.find(x=>x.email===lemail.value&&x.pass===lpass.value);
-if(!u) return msg.innerText="Invalid Login";
+if(!u) return alert("Invalid Login");
 currentUser=u;
 sname.innerText=u.name;
 sid.innerText=u.email;
 show("student");
 };
 
-window.verifyExamCode=()=>{
-onValue(ref(db,"examCode"),snap=>{
-let code=snap.val();
-if(!code) return alert("Exam Code Not Set");
-if(examCodeInput.value.trim()===code.trim()) startExam();
-else alert("Wrong Exam Code");
-},{onlyOnce:true});
+window.verifyExamCode=async()=>{
+
+const snap=await get(ref(db,"examCode"));
+
+if(!snap.exists()) return alert("Exam Code Not Set");
+
+if(examCodeInput.value.trim()!==String(snap.val()).trim())
+return alert("Wrong Exam Code");
+
+startExam();
 };
 
 function startExam(){
 index=0;
 answers={};
-let t=3600;
-
-timerInt=setInterval(()=>{
-let m=Math.floor(t/60),s=t%60;
-timer.innerText=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-if(--t<0){clearInterval(timerInt);showResult();}
-},1000);
-
 show("exam");
 loadQ();
 }
 
 function loadQ(){
 let q=questions[index];
-if(!q){alert("No Questions");return;}
 qtext.innerText=(index+1)+". "+q.q;
 options.innerHTML="";
 [q.o1,q.o2,q.o3,q.o4].forEach((o,i)=>{
-options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}" ${answers[index]==i+1?"checked":""}> ${o}</label><br>`;
+options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}"> ${o}</label><br>`;
 });
 }
 
@@ -263,22 +295,11 @@ if(index>0){index--;loadQ();}
 };
 
 function showResult(){
-clearInterval(timerInt);
-
-let correct=0,attempted=0;
-
+let correct=0;
 questions.forEach((q,i)=>{
-if(answers[i]){
-attempted++;
 if(answers[i]===q.c) correct++;
-}
 });
-
-rmarks.innerHTML=`Total: ${questions.length}<br>
-Attempted: ${attempted}<br>
-Correct: ${correct}<br>
-Wrong: ${attempted-correct}`;
-
+rmarks.innerHTML=`Correct : ${correct} / ${questions.length}`;
 show("result");
 }
 
@@ -289,16 +310,12 @@ snap.forEach(c=>{
 let q=c.val();
 q.id=c.key;
 questions.push(q);
-questionList.innerHTML+=`
-<div class="listBox">${q.q}
-<button onclick="delQ('${q.id}')">Delete</button>
-</div>`;
+questionList.innerHTML+=`<div class="listBox">${q.q}
+<button onclick="delQ('${q.id}')">Delete</button></div>`;
 });
 });
 
 window.addQuestion=()=>{
-if(!aq.value) return alert("Enter Question");
-
 push(ref(db,"questions"),{
 q:aq.value,
 o1:ao1.value,
@@ -307,8 +324,6 @@ o3:ao3.value,
 o4:ao4.value,
 c:+ac.value
 });
-
-alert("Question Added");
 };
 
 window.delQ=id=>{
@@ -316,43 +331,16 @@ remove(ref(db,"questions/"+id));
 };
 
 window.addNotice=()=>{
-if(!noticeText.value) return;
 push(ref(db,"notice"),{text:noticeText.value});
 noticeText.value="";
 };
 
 onValue(ref(db,"notice"),snap=>{
 noticeBox.innerHTML="";
-if(!snap.exists()){
-noticeBox.innerHTML="<p>No Notice</p>";
-return;
-}
 snap.forEach(n=>{
 noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`;
 });
 });
-
-window.addCourse=()=>{
-push(ref(db,"courses"),{name:cname.value,fee:cfee.value,syll:csyll.value});
-};
-
-onValue(ref(db,"courses"),snap=>{
-courseList.innerHTML="";
-snap.forEach(c=>{
-let v=c.val();
-courseList.innerHTML+=`
-<div class="course">
-<h3>${v.name}</h3>
-<p>Fees: ${v.fee}</p>
-<p>${v.syll}</p>
-<button onclick="delCourse('${c.key}')">Delete</button>
-</div>`;
-});
-});
-
-window.delCourse=id=>{
-remove(ref(db,"courses/"+id));
-};
 
 window.setExamCode=()=>{
 set(ref(db,"examCode"),examCodeSet.value);
