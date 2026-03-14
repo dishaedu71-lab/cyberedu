@@ -45,8 +45,6 @@ button{
 padding:10px 20px;background:#b91c1c;color:white;
 border:none;border-radius:5px;cursor:pointer;margin:5px
 }
-button:hover{background:#7f1d1d}
-.listBox{background:#0f172a;color:white;padding:10px;margin:8px;border-radius:5px}
 .notice{background:#fde047;color:black;padding:10px;border-radius:6px;margin:8px}
 </style>
 </head>
@@ -58,45 +56,21 @@ button:hover{background:#7f1d1d}
 <h2>Disha Computer</h2>
 <div>
 <a onclick="show('home')">Home</a>
-<a onclick="show('courses')">Courses</a>
-<a onclick="show('about')">About</a>
 <a onclick="show('login')">Student Login</a>
 <a onclick="show('register')">Register</a>
 <a onclick="adminLogin()">Admin</a>
-<a onclick="logout()">Logout</a>
 </div>
 </nav>
 </header>
 
 <section id="home">
 <div class="hero">
-<h1>India’s Trusted Computer Education</h1>
+<h1>Disha Computer Education</h1>
 <p>Online Exam • Certificate • LMS</p>
 </div>
 
 <h2>📢 Admin Notice</h2>
 <div id="noticeBox"></div>
-</section>
-
-<section id="courses" class="hidden">
-<h2>Our Courses</h2>
-<div class="courses">
-<div class="course">ADCA</div>
-<div class="course">CCC</div>
-<div class="course">O-Level</div>
-<div class="course">Tally Prime</div>
-</div>
-<div id="courseList"></div>
-</section>
-
-<section id="about" class="hidden">
-<h2>Why Choose Us</h2>
-<div class="courses">
-<div class="course">100% Practical</div>
-<div class="course">Online Exam</div>
-<div class="course">Certificate</div>
-<div class="course">Job Oriented</div>
-</div>
 </section>
 
 <section id="register" class="hidden">
@@ -135,7 +109,6 @@ button:hover{background:#7f1d1d}
 <p>Time Left: <b id="timer">60:00</b></p>
 <p id="qtext"></p>
 <div id="options"></div>
-<button onclick="prevQuestion()">Back</button>
 <button onclick="nextQuestion()">Next</button>
 </div>
 </section>
@@ -161,13 +134,6 @@ button:hover{background:#7f1d1d}
 
 <hr>
 
-<input id="cname" placeholder="Course Name">
-<input id="cfee" placeholder="Course Fees">
-<textarea id="csyll" placeholder="Course Syllabus"></textarea>
-<button onclick="addCourse()">Add Course</button>
-
-<hr>
-
 <textarea id="aq" placeholder="Question"></textarea>
 <input id="ao1" placeholder="Option 1">
 <input id="ao2" placeholder="Option 2">
@@ -176,15 +142,13 @@ button:hover{background:#7f1d1d}
 <input id="ac" placeholder="Correct Option (1-4)">
 <button onclick="addQuestion()">Save Question</button>
 
-<h3>Question Bank</h3>
-<div id="questionList"></div>
 </div>
 </section>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+import { getDatabase, ref, push, set, onValue, get } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const app = initializeApp({
 apiKey:"AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
@@ -194,7 +158,9 @@ databaseURL:"https://disha-computer-education-default-rtdb.firebaseio.com"
 const db=getDatabase(app);
 
 let users=JSON.parse(localStorage.getItem("users"))||[];
-let questions=[],answers={},index=0,timerInt,currentUser=null;
+let questions=[];
+let answers={};
+let index=0;
 
 window.show=id=>{
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
@@ -202,7 +168,6 @@ document.getElementById(id).classList.remove("hidden");
 };
 
 window.register=()=>{
-if(!rname.value||!remail.value||!rpass.value) return alert("Fill all");
 users.push({name:rname.value,email:remail.value,pass:rpass.value});
 localStorage.setItem("users",JSON.stringify(users));
 alert("Registered");
@@ -210,95 +175,88 @@ show("login");
 };
 
 window.login=()=>{
-let u=users.find(x=>x.email===lemail.value&&x.pass===lpass.value);
+let u=users.find(x=>x.email===lemail.value && x.pass===lpass.value);
 if(!u) return msg.innerText="Invalid Login";
-currentUser=u;
 sname.innerText=u.name;
 sid.innerText=u.email;
 show("student");
 };
 
-window.verifyExamCode=()=>{
-onValue(ref(db,"examCode"),snap=>{
+window.verifyExamCode=async ()=>{
+let snap=await get(ref(db,"examCode"));
 let code=snap.val();
-if(!code) return alert("Exam Code Not Set");
-if(examCodeInput.value.trim()===code.trim()) startExam();
-else alert("Wrong Exam Code");
-},{onlyOnce:true});
+
+if(!code){
+alert("Admin has not set exam code");
+return;
+}
+
+if(examCodeInput.value.trim()!==code.trim()){
+alert("Wrong Exam Code");
+return;
+}
+
+loadQuestions();
 };
+
+function loadQuestions(){
+get(ref(db,"questions")).then(snap=>{
+questions=[];
+snap.forEach(q=>{
+questions.push(q.val());
+});
+
+if(questions.length==0){
+alert("No questions added by admin");
+return;
+}
+
+startExam();
+});
+}
 
 function startExam(){
 index=0;
 answers={};
-let t=3600;
-
-timerInt=setInterval(()=>{
-let m=Math.floor(t/60),s=t%60;
-timer.innerText=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-if(--t<0){clearInterval(timerInt);showResult();}
-},1000);
-
 show("exam");
 loadQ();
 }
 
 function loadQ(){
 let q=questions[index];
-if(!q){alert("No Questions");return;}
 qtext.innerText=(index+1)+". "+q.q;
+
 options.innerHTML="";
 [q.o1,q.o2,q.o3,q.o4].forEach((o,i)=>{
-options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}" ${answers[index]==i+1?"checked":""}> ${o}</label><br>`;
+options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}"> ${o}</label><br>`;
 });
 }
 
 window.nextQuestion=()=>{
 let s=document.querySelector("input[name=ans]:checked");
 if(s) answers[index]=+s.value;
-index<questions.length-1?(index++,loadQ()):showResult();
-};
 
-window.prevQuestion=()=>{
-if(index>0){index--;loadQ();}
+if(index<questions.length-1){
+index++;
+loadQ();
+}
+else{
+showResult();
+}
 };
 
 function showResult(){
-clearInterval(timerInt);
-
-let correct=0,attempted=0;
+let correct=0;
 
 questions.forEach((q,i)=>{
-if(answers[i]){
-attempted++;
-if(answers[i]===q.c) correct++;
-}
+if(answers[i]==q.c) correct++;
 });
 
-rmarks.innerHTML=`Total: ${questions.length}<br>
-Attempted: ${attempted}<br>
-Correct: ${correct}<br>
-Wrong: ${attempted-correct}`;
-
+rmarks.innerHTML=`Correct: ${correct} / ${questions.length}`;
 show("result");
 }
 
-onValue(ref(db,"questions"),snap=>{
-questions=[];
-questionList.innerHTML="";
-snap.forEach(c=>{
-let q=c.val();
-q.id=c.key;
-questions.push(q);
-questionList.innerHTML+=`
-<div class="listBox">${q.q}
-<button onclick="delQ('${q.id}')">Delete</button>
-</div>`;
-});
-});
-
 window.addQuestion=()=>{
-if(!aq.value) return alert("Enter Question");
-
 push(ref(db,"questions"),{
 q:aq.value,
 o1:ao1.value,
@@ -307,52 +265,20 @@ o3:ao3.value,
 o4:ao4.value,
 c:+ac.value
 });
-
 alert("Question Added");
 };
 
-window.delQ=id=>{
-remove(ref(db,"questions/"+id));
-};
-
 window.addNotice=()=>{
-if(!noticeText.value) return;
 push(ref(db,"notice"),{text:noticeText.value});
 noticeText.value="";
 };
 
 onValue(ref(db,"notice"),snap=>{
 noticeBox.innerHTML="";
-if(!snap.exists()){
-noticeBox.innerHTML="<p>No Notice</p>";
-return;
-}
 snap.forEach(n=>{
 noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`;
 });
 });
-
-window.addCourse=()=>{
-push(ref(db,"courses"),{name:cname.value,fee:cfee.value,syll:csyll.value});
-};
-
-onValue(ref(db,"courses"),snap=>{
-courseList.innerHTML="";
-snap.forEach(c=>{
-let v=c.val();
-courseList.innerHTML+=`
-<div class="course">
-<h3>${v.name}</h3>
-<p>Fees: ${v.fee}</p>
-<p>${v.syll}</p>
-<button onclick="delCourse('${c.key}')">Delete</button>
-</div>`;
-});
-});
-
-window.delCourse=id=>{
-remove(ref(db,"courses/"+id));
-};
 
 window.setExamCode=()=>{
 set(ref(db,"examCode"),examCodeSet.value);
@@ -360,14 +286,15 @@ alert("Exam Code Updated");
 };
 
 window.adminLogin=()=>{
-let e=prompt("Admin Email"),p=prompt("Password");
-if(e==="admin@disha.com"&&p==="admin123") show("admin");
-else alert("Wrong Admin Login");
-};
+let e=prompt("Admin Email");
+let p=prompt("Password");
 
-window.logout=()=>{
-currentUser=null;
-show("home");
+if(e==="admin@disha.com" && p==="admin123"){
+show("admin");
+}
+else{
+alert("Wrong Admin Login");
+}
 };
 
 show("home");
