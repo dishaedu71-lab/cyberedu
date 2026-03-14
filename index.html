@@ -1,301 +1,479 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Disha Computer Education LMS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
 body{
 font-family:Poppins;
+background:#020617;
 color:white;
-background:linear-gradient(-45deg,#020617,#7f1d1d,#020617,#991b1b);
-background-size:400% 400%;
-animation:bgmove 12s ease infinite;
+margin:0
 }
-@keyframes bgmove{
-0%{background-position:0% 50%}
-50%{background-position:100% 50%}
-100%{background-position:0% 50%}
+
+header{
+background:#7f1d1d;
+padding:15px;
+text-align:center;
+color:gold
 }
-header{background:#7f1d1d;border-bottom:2px solid gold;position:sticky;top:0;z-index:99}
-nav{display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
-nav h2{color:gold}
-nav a{color:white;margin:0 10px;cursor:pointer;text-decoration:none}
-nav a:hover{color:gold}
-section{padding:60px 20px}
+
+section{padding:30px}
+
 .hidden{display:none}
-h2{text-align:center;color:gold;margin-bottom:20px}
-.hero{text-align:center;padding:90px 20px}
-.hero h1{font-size:42px;color:gold}
-.courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
-.course{background:#0f172a;padding:15px;border-radius:10px;text-align:center}
+
 .card{
-background:white;color:black;max-width:520px;
-margin:20px auto;padding:20px;border-radius:10px
+background:white;
+color:black;
+max-width:500px;
+margin:auto;
+padding:20px;
+border-radius:10px
 }
+
 input,textarea{
-width:100%;padding:10px;margin:8px 0;
-border-radius:5px;border:1px solid #ccc
+width:100%;
+padding:10px;
+margin:6px 0
 }
+
 button{
-padding:10px 20px;background:#b91c1c;color:white;
-border:none;border-radius:5px;cursor:pointer;margin:5px
+background:#b91c1c;
+color:white;
+border:none;
+padding:10px 20px;
+cursor:pointer
 }
-.notice{background:#fde047;color:black;padding:10px;border-radius:6px;margin:8px}
+
+.notice{
+background:gold;
+color:black;
+padding:10px;
+margin:5px 0;
+border-radius:5px
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<nav>
-<h2>Disha Computer</h2>
-<div>
-<a onclick="show('home')">Home</a>
-<a onclick="show('login')">Student Login</a>
-<a onclick="show('register')">Register</a>
-<a onclick="adminLogin()">Admin</a>
-</div>
-</nav>
+<h2>Disha Computer Education</h2>
+<button onclick="show('home')">Home</button>
+<button onclick="show('login')">Student Login</button>
+<button onclick="show('register')">Register</button>
+<button onclick="adminLogin()">Admin</button>
 </header>
 
-<section id="home">
-<div class="hero">
-<h1>Disha Computer Education</h1>
-<p>Online Exam • Certificate • LMS</p>
-</div>
 
-<h2>📢 Admin Notice</h2>
+<section id="home">
+
+<h2>Admin Notice</h2>
 <div id="noticeBox"></div>
+
 </section>
+
 
 <section id="register" class="hidden">
+
 <div class="card">
-<h2>Student Registration</h2>
+
+<h3>Register</h3>
+
 <input id="rname" placeholder="Name">
 <input id="remail" placeholder="Email">
-<input id="rpass" type="password" placeholder="Password">
+<input id="rpass" placeholder="Password" type="password">
+
 <button onclick="register()">Register</button>
+
 </div>
+
 </section>
+
 
 <section id="login" class="hidden">
+
 <div class="card">
-<h2>Student Login</h2>
+
+<h3>Login</h3>
+
 <input id="lemail" placeholder="Email">
-<input id="lpass" type="password" placeholder="Password">
-<p id="msg"></p>
+<input id="lpass" placeholder="Password" type="password">
+
 <button onclick="login()">Login</button>
+
 </div>
+
 </section>
+
 
 <section id="student" class="hidden">
+
 <div class="card">
-<h2>Student Dashboard</h2>
+
+<h3>Student Dashboard</h3>
+
 <p>Name: <b id="sname"></b></p>
-<p>ID: <b id="sid"></b></p>
+
 <input id="examCodeInput" placeholder="Enter Exam Code">
+
 <button onclick="verifyExamCode()">Start Exam</button>
+
 </div>
+
 </section>
+
 
 <section id="exam" class="hidden">
+
 <div class="card">
-<h2>Online Exam</h2>
-<p>Time Left: <b id="timer">60:00</b></p>
+
+<h3>Online Exam</h3>
+
 <p id="qtext"></p>
+
 <div id="options"></div>
+
 <button onclick="nextQuestion()">Next</button>
+
 </div>
+
 </section>
+
 
 <section id="result" class="hidden">
+
 <div class="card">
-<h2>Result</h2>
+
+<h3>Result</h3>
+
 <p id="rmarks"></p>
+
 </div>
+
 </section>
 
+
 <section id="admin" class="hidden">
+
 <div class="card">
-<h2>Admin Panel</h2>
+
+<h3>Admin Panel</h3>
 
 <input id="examCodeSet" placeholder="Set Exam Code">
+
 <button onclick="setExamCode()">Update Exam Code</button>
 
 <hr>
 
-<textarea id="noticeText" placeholder="Admin Notice"></textarea>
+<textarea id="noticeText" placeholder="Write Notice"></textarea>
+
 <button onclick="addNotice()">Publish Notice</button>
 
 <hr>
 
 <textarea id="aq" placeholder="Question"></textarea>
+
 <input id="ao1" placeholder="Option 1">
 <input id="ao2" placeholder="Option 2">
 <input id="ao3" placeholder="Option 3">
 <input id="ao4" placeholder="Option 4">
 <input id="ac" placeholder="Correct Option (1-4)">
-<button onclick="addQuestion()">Save Question</button>
+
+<button onclick="addQuestion()">Add Question</button>
 
 </div>
+
 </section>
+
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, get } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+import { getDatabase, ref, push, set, get, onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const app = initializeApp({
+
 apiKey:"AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
+
 databaseURL:"https://disha-computer-education-default-rtdb.firebaseio.com"
+
 });
 
-const db=getDatabase(app);
+const db = getDatabase(app);
 
-let users=JSON.parse(localStorage.getItem("users"))||[];
-let questions=[];
-let answers={};
-let index=0;
+let users = JSON.parse(localStorage.getItem("users")) || [];
 
-window.show=id=>{
+let questions = [];
+
+let answers = {};
+
+let index = 0;
+
+
+
+window.show = id => {
+
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+
 document.getElementById(id).classList.remove("hidden");
+
 };
 
-window.register=()=>{
-users.push({name:rname.value,email:remail.value,pass:rpass.value});
+
+
+window.register = () => {
+
+users.push({
+
+name:rname.value,
+
+email:remail.value,
+
+pass:rpass.value
+
+});
+
 localStorage.setItem("users",JSON.stringify(users));
+
 alert("Registered");
+
 show("login");
+
 };
 
-window.login=()=>{
-let u=users.find(x=>x.email===lemail.value && x.pass===lpass.value);
-if(!u) return msg.innerText="Invalid Login";
-sname.innerText=u.name;
-sid.innerText=u.email;
+
+
+window.login = () => {
+
+let u = users.find(x=>x.email===lemail.value && x.pass===lpass.value);
+
+if(!u){alert("Invalid Login");return;}
+
+sname.innerText = u.name;
+
 show("student");
+
 };
 
-window.verifyExamCode=async ()=>{
-let snap=await get(ref(db,"examCode"));
-let code=snap.val();
 
-if(!code){
-alert("Admin has not set exam code");
+
+window.verifyExamCode = async () => {
+
+let snap = await get(ref(db,"examCode"));
+
+if(!snap.exists()){
+
+alert("Exam Code Not Set");
+
 return;
+
 }
 
-if(examCodeInput.value.trim()!==code.trim()){
+let code = snap.val();
+
+let input = examCodeInput.value.trim();
+
+if(input !== code){
+
 alert("Wrong Exam Code");
+
 return;
+
 }
 
 loadQuestions();
+
 };
 
+
+
 function loadQuestions(){
+
 get(ref(db,"questions")).then(snap=>{
+
 questions=[];
+
 snap.forEach(q=>{
+
 questions.push(q.val());
+
 });
 
 if(questions.length==0){
-alert("No questions added by admin");
+
+alert("No Questions Added");
+
 return;
+
 }
 
 startExam();
+
 });
+
 }
+
+
 
 function startExam(){
+
 index=0;
+
 answers={};
+
 show("exam");
+
 loadQ();
+
 }
+
+
 
 function loadQ(){
-let q=questions[index];
-qtext.innerText=(index+1)+". "+q.q;
+
+let q = questions[index];
+
+qtext.innerText = (index+1)+". "+q.q;
 
 options.innerHTML="";
+
 [q.o1,q.o2,q.o3,q.o4].forEach((o,i)=>{
-options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}"> ${o}</label><br>`;
+
+options.innerHTML += `<label><input type="radio" name="ans" value="${i+1}"> ${o}</label><br>`;
+
 });
+
 }
 
-window.nextQuestion=()=>{
-let s=document.querySelector("input[name=ans]:checked");
-if(s) answers[index]=+s.value;
 
-if(index<questions.length-1){
+
+window.nextQuestion = () => {
+
+let s = document.querySelector("input[name=ans]:checked");
+
+if(s) answers[index] = +s.value;
+
+if(index < questions.length-1){
+
 index++;
+
 loadQ();
-}
-else{
+
+}else{
+
 showResult();
+
 }
+
 };
 
+
+
 function showResult(){
+
 let correct=0;
 
 questions.forEach((q,i)=>{
+
 if(answers[i]==q.c) correct++;
+
 });
 
-rmarks.innerHTML=`Correct: ${correct} / ${questions.length}`;
+rmarks.innerHTML = "Score : "+correct+" / "+questions.length;
+
 show("result");
+
 }
 
-window.addQuestion=()=>{
-push(ref(db,"questions"),{
-q:aq.value,
-o1:ao1.value,
-o2:ao2.value,
-o3:ao3.value,
-o4:ao4.value,
-c:+ac.value
+
+
+window.addNotice = () => {
+
+push(ref(db,"notice"),{
+
+text:noticeText.value
+
 });
-alert("Question Added");
+
+noticeText.value="";
+
 };
 
-window.addNotice=()=>{
-push(ref(db,"notice"),{text:noticeText.value});
-noticeText.value="";
-};
+
 
 onValue(ref(db,"notice"),snap=>{
+
 noticeBox.innerHTML="";
+
 snap.forEach(n=>{
+
 noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`;
-});
+
 });
 
-window.setExamCode=()=>{
+});
+
+
+
+window.setExamCode = () => {
+
 set(ref(db,"examCode"),examCodeSet.value);
+
 alert("Exam Code Updated");
+
 };
 
-window.adminLogin=()=>{
-let e=prompt("Admin Email");
-let p=prompt("Password");
+
+
+window.addQuestion = () => {
+
+push(ref(db,"questions"),{
+
+q:aq.value,
+
+o1:ao1.value,
+
+o2:ao2.value,
+
+o3:ao3.value,
+
+o4:ao4.value,
+
+c:+ac.value
+
+});
+
+alert("Question Added");
+
+};
+
+
+
+window.adminLogin = () => {
+
+let e = prompt("Admin Email");
+
+let p = prompt("Password");
 
 if(e==="admin@disha.com" && p==="admin123"){
+
 show("admin");
+
+}else{
+
+alert("Wrong Login");
+
 }
-else{
-alert("Wrong Admin Login");
-}
+
 };
+
+
 
 show("home");
 
