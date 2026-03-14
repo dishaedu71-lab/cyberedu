@@ -189,6 +189,7 @@ const app = initializeApp({
 apiKey: "AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
 databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com"
 });
+
 const db = getDatabase(app);
 
 let users=JSON.parse(localStorage.getItem("users"))||[];
@@ -237,8 +238,7 @@ let q=questions[index];
 qtext.innerText=(index+1)+". "+q.q;
 options.innerHTML="";
 [q.o1,q.o2,q.o3,q.o4].forEach((o,i)=>{
-options.innerHTML+=`
-<label><input type="radio" name="ans" value="${i+1}" ${answers[index]==i+1?"checked":""}> ${o}</label><br>`;
+options.innerHTML+=`<label><input type="radio" name="ans" value="${i+1}" ${answers[index]==i+1?"checked":""}> ${o}</label><br>`;
 });
 }
 
@@ -247,6 +247,7 @@ let s=document.querySelector("input[name=ans]:checked");
 if(s) answers[index]=+s.value;
 index<questions.length-1?(index++,loadQ()):showResult();
 };
+
 window.prevQuestion=()=>{if(index>0){index--;loadQ();}};
 
 function showResult(){
@@ -260,16 +261,17 @@ show("result");
 }
 
 onValue(ref(db,"questions"),snap=>{
-questions=[];questionList.innerHTML="";
+questions=[];
+let ql=document.getElementById("questionList");
+ql.innerHTML="";
 snap.forEach(c=>{
 let q=c.val();q.id=c.key;questions.push(q);
-questionList.innerHTML+=`<div class="listBox">${q.q}
+ql.innerHTML+=`<div class="listBox">${q.q}
 <button onclick="delQ('${q.id}')">Delete</button></div>`;
 });
 });
 
 window.addQuestion=()=>{
-if(!aq.value||!ao1.value||!ao2.value||!ao3.value||!ao4.value||!ac.value) return;
 push(ref(db,"questions"),{q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:+ac.value});
 alert("Question Added");
 };
@@ -282,15 +284,15 @@ noticeText.value="";
 };
 
 onValue(ref(db,"notice"),snap=>{
-noticeBox.innerHTML="";
+let box=document.getElementById("noticeBox");
+box.innerHTML="";
 snap.forEach(n=>{
-noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`;
+box.innerHTML+=`<div class="notice">${n.val().text}</div>`;
 });
 });
 
 window.addCourse=()=>{
 push(ref(db,"courses"),{name:cname.value,fee:cfee.value,syll:csyll.value});
-cname.value=cfee.value=csyll.value="";
 };
 
 onValue(ref(db,"courses"),snap=>{
@@ -319,9 +321,9 @@ else alert("Wrong Admin Login");
 };
 
 window.logout=()=>{currentUser=null;show("home");};
+
 show("home");
 </script>
 
 </body>
 </html>
-
