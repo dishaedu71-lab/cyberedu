@@ -182,18 +182,19 @@ button:hover{background:#7f1d1d}
 </section>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const app = initializeApp({
-apiKey: "AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
-databaseURL: "https://disha-computer-education-default-rtdb.firebaseio.com"
+apiKey:"AIzaSyAmjBKWat_CnKgyqeoJbDCPEI5cc9n-dno",
+databaseURL:"https://disha-computer-education-default-rtdb.firebaseio.com"
 });
 
-const db = getDatabase(app);
+const db=getDatabase(app);
 
 let users=JSON.parse(localStorage.getItem("users"))||[];
-let questions=[], answers={}, index=0, timerInt, currentUser=null;
+let questions=[],answers={},index=0,timerInt,currentUser=null;
 
 window.show=id=>{
 document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
@@ -204,7 +205,8 @@ window.register=()=>{
 if(!rname.value||!remail.value||!rpass.value) return alert("Fill all");
 users.push({name:rname.value,email:remail.value,pass:rpass.value});
 localStorage.setItem("users",JSON.stringify(users));
-alert("Registered");show("login");
+alert("Registered");
+show("login");
 };
 
 window.login=()=>{
@@ -218,23 +220,31 @@ show("student");
 
 window.verifyExamCode=()=>{
 onValue(ref(db,"examCode"),snap=>{
-if(examCodeInput.value===snap.val()) startExam();
+let code=snap.val();
+if(!code) return alert("Exam Code Not Set");
+if(examCodeInput.value.trim()===code.trim()) startExam();
 else alert("Wrong Exam Code");
 },{onlyOnce:true});
 };
 
 function startExam(){
-index=0;answers={};let t=3600;
+index=0;
+answers={};
+let t=3600;
+
 timerInt=setInterval(()=>{
 let m=Math.floor(t/60),s=t%60;
 timer.innerText=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 if(--t<0){clearInterval(timerInt);showResult();}
 },1000);
-show("exam");loadQ();
+
+show("exam");
+loadQ();
 }
 
 function loadQ(){
 let q=questions[index];
+if(!q){alert("No Questions");return;}
 qtext.innerText=(index+1)+". "+q.q;
 options.innerHTML="";
 [q.o1,q.o2,q.o3,q.o4].forEach((o,i)=>{
@@ -248,46 +258,77 @@ if(s) answers[index]=+s.value;
 index<questions.length-1?(index++,loadQ()):showResult();
 };
 
-window.prevQuestion=()=>{if(index>0){index--;loadQ();}};
+window.prevQuestion=()=>{
+if(index>0){index--;loadQ();}
+};
 
 function showResult(){
 clearInterval(timerInt);
+
 let correct=0,attempted=0;
+
 questions.forEach((q,i)=>{
-if(answers[i]){attempted++;if(answers[i]===q.c) correct++;}
+if(answers[i]){
+attempted++;
+if(answers[i]===q.c) correct++;
+}
 });
-rmarks.innerHTML=`Total: ${questions.length}<br>Attempted: ${attempted}<br>Correct: ${correct}<br>Wrong: ${attempted-correct}`;
+
+rmarks.innerHTML=`Total: ${questions.length}<br>
+Attempted: ${attempted}<br>
+Correct: ${correct}<br>
+Wrong: ${attempted-correct}`;
+
 show("result");
 }
 
 onValue(ref(db,"questions"),snap=>{
 questions=[];
-let ql=document.getElementById("questionList");
-ql.innerHTML="";
+questionList.innerHTML="";
 snap.forEach(c=>{
-let q=c.val();q.id=c.key;questions.push(q);
-ql.innerHTML+=`<div class="listBox">${q.q}
-<button onclick="delQ('${q.id}')">Delete</button></div>`;
+let q=c.val();
+q.id=c.key;
+questions.push(q);
+questionList.innerHTML+=`
+<div class="listBox">${q.q}
+<button onclick="delQ('${q.id}')">Delete</button>
+</div>`;
 });
 });
 
 window.addQuestion=()=>{
-push(ref(db,"questions"),{q:aq.value,o1:ao1.value,o2:ao2.value,o3:ao3.value,o4:ao4.value,c:+ac.value});
+if(!aq.value) return alert("Enter Question");
+
+push(ref(db,"questions"),{
+q:aq.value,
+o1:ao1.value,
+o2:ao2.value,
+o3:ao3.value,
+o4:ao4.value,
+c:+ac.value
+});
+
 alert("Question Added");
 };
 
-window.delQ=id=>remove(ref(db,"questions/"+id));
+window.delQ=id=>{
+remove(ref(db,"questions/"+id));
+};
 
 window.addNotice=()=>{
+if(!noticeText.value) return;
 push(ref(db,"notice"),{text:noticeText.value});
 noticeText.value="";
 };
 
 onValue(ref(db,"notice"),snap=>{
-let box=document.getElementById("noticeBox");
-box.innerHTML="";
+noticeBox.innerHTML="";
+if(!snap.exists()){
+noticeBox.innerHTML="<p>No Notice</p>";
+return;
+}
 snap.forEach(n=>{
-box.innerHTML+=`<div class="notice">${n.val().text}</div>`;
+noticeBox.innerHTML+=`<div class="notice">${n.val().text}</div>`;
 });
 });
 
@@ -304,10 +345,14 @@ courseList.innerHTML+=`
 <h3>${v.name}</h3>
 <p>Fees: ${v.fee}</p>
 <p>${v.syll}</p>
-<button onclick="remove(ref(db,'courses/${c.key}'))">Delete</button>
+<button onclick="delCourse('${c.key}')">Delete</button>
 </div>`;
 });
 });
+
+window.delCourse=id=>{
+remove(ref(db,"courses/"+id));
+};
 
 window.setExamCode=()=>{
 set(ref(db,"examCode"),examCodeSet.value);
@@ -320,9 +365,13 @@ if(e==="admin@disha.com"&&p==="admin123") show("admin");
 else alert("Wrong Admin Login");
 };
 
-window.logout=()=>{currentUser=null;show("home");};
+window.logout=()=>{
+currentUser=null;
+show("home");
+};
 
 show("home");
+
 </script>
 
 </body>
